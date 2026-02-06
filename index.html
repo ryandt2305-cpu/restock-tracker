@@ -315,8 +315,9 @@
     .restock-decor-atlas {
       display: block;
       image-rendering: pixelated;
-      transform: scale(0.22);
-      transform-origin: center;
+      width: 32px;
+      height: 32px;
+      background-repeat: no-repeat;
     }
 
     .restock-coin-atlas {
@@ -1901,6 +1902,7 @@
     }
 
     function getItemName(itemId, shopType) {
+      if (shopType === 'seed' && itemId === 'OrangeTulip') return 'Orange Tulip';
       const meta = getItemMeta(itemId, shopType);
       return meta?.name || itemId;
     }
@@ -1931,24 +1933,30 @@
     }
 
     function getDecorAtlasFrame(itemId) {
-      if (DECOR_ATLAS_FRAMES[itemId]) return DECOR_ATLAS_FRAMES[itemId];
-      const sideways = `${itemId}Sideways`;
-      if (DECOR_ATLAS_FRAMES[sideways]) return DECOR_ATLAS_FRAMES[sideways];
-      const back = `${itemId}Backwards`;
-      if (DECOR_ATLAS_FRAMES[back]) return DECOR_ATLAS_FRAMES[back];
-      const side = `${itemId}Side`;
-      if (DECOR_ATLAS_FRAMES[side]) return DECOR_ATLAS_FRAMES[side];
+      const aliases = {
+        StoneBirdbath: "StoneBirdBath",
+        WoodBirdhouse: "Birdhouse"
+      };
+      const canonical = aliases[itemId] || itemId;
+      if (DECOR_ATLAS_FRAMES[canonical]) return DECOR_ATLAS_FRAMES[canonical];
       return null;
     }
 
     function getDecorSpriteStyle(itemId) {
       const frame = getDecorAtlasFrame(itemId);
       if (!frame) return null;
-      return `width:${frame.w}px;height:${frame.h}px;` +
+      const target = 32;
+      const scale = Math.max(target / frame.w, target / frame.h);
+      const bgW = 4096 * scale;
+      const bgH = 7387 * scale;
+      const centerX = (frame.x + frame.w / 2) * scale;
+      const centerY = (frame.y + frame.h / 2) * scale;
+      const posX = target / 2 - centerX;
+      const posY = target / 2 - centerY;
+      return `width:${target}px;height:${target}px;` +
         `background-image:url('./flat-sprites.webp');` +
-        `background-position:-${frame.x}px -${frame.y}px;` +
-        `background-repeat:no-repeat;` +
-        `background-size:4096px 7387px;`;
+        `background-size:${bgW}px ${bgH}px;` +
+        `background-position:${posX}px ${posY}px;`;
     }
 
     function getCoinSpriteStyle() {
