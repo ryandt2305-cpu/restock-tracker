@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magic Garden Restock Tracker</title>
+  <style>
+    /* === Reset & Base === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Dark theme (default) */
+      --bg: rgba(10, 12, 18, 0.6);
+      --fg: #e5e7eb;
+      --muted: rgba(229, 231, 235, 0.08);
+      --soft: rgba(229, 231, 235, 0.05);
+      --accent: #60a5fa;
+      --border: rgba(148, 163, 184, 0.2);
+      --shadow: rgba(0, 0, 0, 0.45);
+      --paper: #1a1d24;
+
+      /* Layout */
+      --radius: 18px;
+      --radius-sm: 10px;
+      --spacing-xs: 6px;
+      --spacing-sm: 8px;
+      --spacing-md: 12px;
+      --spacing-lg: 16px;
+      --glass-blur: 14px;
+      --font-size-sm: 12px;
+
+      /* Rarity colors (game-authentic) */
+      --rarity-common: #E7E7E7;
+      --rarity-uncommon: #67BD4D;
+      --rarity-rare: #0071C6;
+      --rarity-legendary: #FFC734;
+      --rarity-mythical: #9944A7;
+      --rarity-divine: #FF7835;
+      --rarity-celestial: #FF00FF;
+
+      /* Rainbow gradient */
+      --rainbow-text-gradient: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #ff00ff);
+
+      /* Font */
+      --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Light theme */
+    body.theme-light {
+      --bg: rgba(255, 255, 255, 0.7);
+      --fg: #0f172a;
+      --muted: rgba(15, 23, 42, 0.06);
+      --soft: rgba(15, 23, 42, 0.04);
+      --accent: #2563eb;
+      --border: rgba(15, 23, 42, 0.12);
+      --shadow: rgba(2, 6, 23, 0.2);
+      --paper: #FDFBF7;
+      --rainbow-text-gradient: linear-gradient(90deg, #b000b0, #d00000, #b08000, #008000, #0000b0, #4b0082, #9400d3);
+    }
+
+    body {
+      font-family: var(--font-ui);
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: var(--fg);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      padding: 20px;
+      transition: background 0.3s ease;
+    }
+
+    body.theme-light {
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+
+    /* === Header === */
+    .header {
+      max-width: 1200px;
+      margin: 0 auto 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-title h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      background: var(--bg);
+      backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      color: var(--fg);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-ui);
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    /* === Container === */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    /* === Status Bar === */
+    .restock-status-bar {
+      background: var(--bg);
+      backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0 var(--spacing-xs);
+      min-height: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--font-size-sm);
+      color: var(--fg);
+      opacity: 0.9;
+      transition: border-color 0.2s ease;
+    }
+
+    .restock-status-bar:hover {
+      border-color: color-mix(in oklab, var(--border) 80%, var(--accent));
+    }
+
+    .restock-status-left {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .restock-status-right {
+      opacity: 0.7;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* === Card === */
+    .restock-card {
+      background: var(--bg);
+      backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .restock-card:hover {
+      border-color: color-mix(in oklab, var(--border) 80%, var(--accent));
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--fg);
+    }
+
+    .card-header .toggle-icon {
+      color: var(--fg);
+      opacity: 0.6;
+      transition: transform 0.2s ease;
+    }
+
+    .card.collapsed .toggle-icon {
+      transform: rotate(-90deg);
+    }
+
+    .card-content {
+      max-height: 1000px;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .card.collapsed .card-content {
+      max-height: 0;
+    }
+
+    /* === Predictions === */
+    .restock-pred-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: var(--spacing-sm);
+    }
+
+    .restock-pred-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      gap: 12px;
+      border-radius: var(--radius-sm);
+      background: color-mix(in oklab, var(--bg) 50%, transparent);
+      border: 1px solid transparent;
+      min-height: 52px;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .restock-pred-row:hover {
+      transform: scale(1.01);
+      background: var(--soft);
+      border-color: var(--border);
+      box-shadow: 0 4px 12px var(--shadow);
+      z-index: 2;
+    }
+
+    .restock-pred-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex: 1;
+      max-width: calc(100% - 200px);
+    }
+
+    .restock-icon-wrap {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--soft);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Rarity Borders */
+    .restock-icon-wrap.rarity-common { border-color: var(--rarity-common); }
+    .restock-icon-wrap.rarity-uncommon { border-color: var(--rarity-uncommon); }
+    .restock-icon-wrap.rarity-rare { border-color: var(--rarity-rare); }
+    .restock-icon-wrap.rarity-legendary {
+      border-color: var(--rarity-legendary);
+      box-shadow: 0 0 8px color-mix(in oklab, var(--rarity-legendary) 30%, transparent);
+    }
+    .restock-icon-wrap.rarity-mythical {
+      border-color: var(--rarity-mythical);
+      box-shadow: 0 0 10px color-mix(in oklab, var(--rarity-mythical) 40%, transparent);
+    }
+    .restock-icon-wrap.rarity-divine {
+      border-color: var(--rarity-divine);
+      box-shadow: 0 0 12px color-mix(in oklab, var(--rarity-divine) 50%, transparent);
+    }
+    .restock-icon-wrap.rarity-celestial {
+      border-color: var(--rarity-celestial);
+      box-shadow: 0 0 12px color-mix(in oklab, var(--rarity-celestial) 50%, transparent);
+    }
+
+    .restock-item-sprite {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      image-rendering: pixelated;
+    }
+
+    .restock-pred-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .restock-pred-line1 {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .restock-item-name {
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+
+    /* Rarity Text Colors */
+    .restock-text-common { color: var(--fg); }
+    .restock-text-uncommon { color: var(--rarity-uncommon); }
+    .restock-text-rare { color: var(--rarity-rare); }
+    .restock-text-legendary { color: var(--rarity-legendary); }
+    .restock-text-mythical { color: var(--rarity-mythical); }
+    .restock-text-divine { color: var(--rarity-divine); }
+    .restock-text-celestial { color: var(--rarity-celestial); }
+    .restock-text-rainbow {
+      background-image: var(--rainbow-text-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .restock-pred-line2 {
+      font-size: 12px;
+      opacity: 0.7;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+
+    .restock-pred-metrics {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .restock-pred-metric-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      min-width: 52px;
+      width: 52px;
+      cursor: help;
+    }
+
+    .restock-pred-metric-value {
+      font-size: 20px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      color: var(--fg);
+    }
+
+    .restock-pred-metric-label {
+      font-size: 10px;
+      opacity: 0.5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ETA Colors */
+    .restock-eta-now { color: #10b981 !important; }
+    .restock-eta-imminent { color: #22c55e !important; }
+    .restock-eta-soon { color: #84cc16 !important; }
+    .restock-eta-today { color: #eab308 !important; }
+    .restock-eta-week { color: #f97316 !important; }
+    .restock-eta-fortnight { color: #f87171 !important; }
+    .restock-eta-far { color: #ef4444 !important; }
+
+    /* Rate Colors */
+    .restock-rate-high { color: #4ade80; }
+    .restock-rate-mid { color: #fbbf24; }
+    .restock-rate-low { color: #f87171; }
+
+    /* Tooltip */
+    .restock-pred-metric-wrap[data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      background: color-mix(in oklab, var(--bg) 95%, var(--fg));
+      backdrop-filter: blur(8px);
+      border: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+      border-radius: 8px;
+      color: var(--fg);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      white-space: pre-line;
+      z-index: 100;
+      box-shadow: 0 4px 16px color-mix(in oklab, var(--shadow) 40%, transparent);
+      pointer-events: none;
+      animation: tooltip-fade-in 0.15s ease-out;
+    }
+
+    @keyframes tooltip-fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* === History Table === */
+    .restock-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      padding-bottom: 0;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      padding: 6px 12px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--fg);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-ui);
+    }
+
+    .filter-btn:hover {
+      background: var(--muted);
+      border-color: var(--accent);
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .search-bar {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      background: color-mix(in oklab, var(--soft) 80%, transparent);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--fg);
+      font-size: 13px;
+      font-family: var(--font-ui);
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      outline: 2px solid color-mix(in oklab, var(--accent) 45%, transparent);
+      border-color: var(--accent);
+    }
+
+    .search-input::placeholder {
+      color: var(--fg);
+      opacity: 0.5;
+    }
+
+    .history-table {
+      width: 100%;
+      padding: var(--spacing-sm);
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .history-table table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 2px;
+    }
+
+    .history-table thead th {
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--fg);
+      opacity: 0.6;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 1;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .history-table thead th:hover {
+      opacity: 1;
+    }
+
+    .history-table tbody tr {
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .history-table tbody tr:hover {
+      transform: scale(1.01);
+      background: var(--soft);
+      z-index: 2;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .history-table tbody td {
+      padding: 8px 12px;
+      border-top: 1px solid transparent;
+      border-bottom: 1px solid transparent;
+    }
+
+    .history-table tbody tr:hover td {
+      border-color: var(--border);
+    }
+
+    .history-table tbody td:first-child {
+      border-left: 1px solid transparent;
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    }
+
+    .history-table tbody td:last-child {
+      border-right: 1px solid transparent;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .history-table tbody tr:hover td:first-child {
+      border-left-color: var(--border);
+    }
+
+    .history-table tbody tr:hover td:last-child {
+      border-right-color: var(--border);
+    }
+
+    .restock-item-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 0;
+    }
+
+    .restock-item-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .restock-item-sub {
+      font-size: 12px;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1;
+    }
+
+    .restock-tracked-icon {
+      color: var(--rarity-legendary);
+      font-size: 12px;
+      filter: drop-shadow(0 0 2px color-mix(in oklab, var(--rarity-legendary) 50%, transparent));
+    }
+
+    .restock-price-wrap {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      color: var(--rarity-legendary);
+      font-weight: 700;
+    }
+
+    .restock-coin-icon {
+      width: 14px;
+      height: 14px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .restock-time-cell {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      opacity: 0.9;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .shop-pill {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .shop-pill.seed {
+      background: #22c55e;
+      color: white;
+    }
+
+    .shop-pill.egg {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .shop-pill.decor {
+      background: #a855f7;
+      color: white;
+    }
+
+    /* Empty State */
+    .empty-state {
+      padding: 40px 20px;
+      text-align: center;
+      opacity: 0.6;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      gap: 8px;
+    }
+
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-title h1 {
+        font-size: 22px;
+      }
+
+      .restock-pred-metrics {
+        gap: 12px;
+      }
+
+      .restock-pred-metric-wrap {
+        min-width: 48px;
+        width: 48px;
+      }
+
+      .restock-pred-left {
+        max-width: calc(100% - 120px);
+      }
+
+      .history-table {
+        overflow-x: auto;
+      }
+
+      .restock-icon-wrap {
+        width: 36px;
+        height: 36px;
+      }
+
+      .restock-item-sprite {
+        width: 28px;
+        height: 28px;
+      }
+
+      .restock-item-name {
+        font-size: 13px;
+      }
+    }
+
+    /* Sort indicator */
+    .sort-indicator {
+      display: inline-block;
+      margin-left: 4px;
+      opacity: 0.5;
+    }
+
+    .sort-indicator.active {
+      opacity: 1;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title">
+      <h1>Magic Garden Restock Tracker</h1>
+    </div>
+    <div class="header-controls">
+      <button class="theme-toggle" id="refresh-btn" onclick="manualRefresh()">
+        🔄 Refresh
+      </button>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span> Toggle Theme
+      </button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Status Bar -->
+    <div class="restock-status-bar">
+      <div class="restock-status-left">
+        <div class="status-indicator"></div>
+        <span id="status-text">Loading...</span>
+      </div>
+      <div class="restock-status-right" id="last-updated">
+        Last updated: -
+      </div>
+    </div>
+
+    <!-- Active Predictions Card -->
+    <div class="restock-card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <h2>Active Predictions</h2>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-content">
+        <div class="restock-pred-list" id="predictions-list">
+          <div class="empty-state">
+            Click an item in the History to show next restock estimation
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Card -->
+    <div class="restock-card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <h2>History</h2>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-content">
+        <div class="restock-filter-bar">
+          <div class="filter-group">
+            <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+            <button class="filter-btn" data-filter="seed" onclick="setFilter('seed')">Seeds</button>
+            <button class="filter-btn" data-filter="egg" onclick="setFilter('egg')">Eggs</button>
+            <button class="filter-btn" data-filter="decor" onclick="setFilter('decor')">Decor</button>
+          </div>
+          <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search..." oninput="handleSearch(this.value)">
+          </div>
+        </div>
+        <div class="history-table" id="history-table">
+          <div class="loading">
+            <div class="loading-spinner"></div>
+            <span>Loading history...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === Configuration ===
+    const CONFIG = {
+      API_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqdXZyeWpncmpjaGJoaml4d3poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMDYyODMsImV4cCI6MjA4NTY4MjI4M30.MqQCBG-UMR4HYJU44Tz2orHUj9gMgJTMJtxpb_MHeps',
+      API_URL: 'https://xjuvryjgrjchbhjixwzh.supabase.co/functions/v1/restock-history',
+      CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
+      MIN_REFRESH_INTERVAL: 30 * 1000, // 30 seconds minimum between refreshes
+      MAX_RETRIES: 3,
+      RETRY_DELAY: 2000
+    };
+
+    // === State ===
+    let historyData = [];
+    let gameData = { plants: {}, eggs: {}, decor: {} };
+    let trackedItems = new Set();
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let sortColumn = null;
+    let sortDirection = 'asc';
+    let lastFetchTime = 0;
+    let isFetching = false;
+    let retryCount = 0;
+
+    // === Theme Toggle ===
+    function toggleTheme() {
+      document.body.classList.toggle('theme-light');
+      const icon = document.getElementById('theme-icon');
+      icon.textContent = document.body.classList.contains('theme-light') ? '🌙' : '☀️';
+      localStorage.setItem('theme', document.body.classList.contains('theme-light') ? 'light' : 'dark');
+    }
+
+    // Load saved theme
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('theme-light');
+      document.getElementById('theme-icon').textContent = '🌙';
+    }
+
+    // === Card Toggle ===
+    function toggleCard(header) {
+      header.parentElement.classList.toggle('collapsed');
+    }
+
+    // === Cache Management ===
+    function getCachedData(key) {
+      try {
+        const cached = localStorage.getItem(key);
+        if (!cached) return null;
+
+        const { data, timestamp } = JSON.parse(cached);
+        const age = Date.now() - timestamp;
+
+        if (age > CONFIG.CACHE_DURATION) {
+          localStorage.removeItem(key);
+          return null;
+        }
+
+        return data;
+      } catch (e) {
+        console.error('Cache read error:', e);
+        return null;
+      }
+    }
+
+    function setCachedData(key, data) {
+      try {
+        localStorage.setItem(key, JSON.stringify({
+          data,
+          timestamp: Date.now()
+        }));
+      } catch (e) {
+        console.error('Cache write error:', e);
+      }
+    }
+
+    function getCacheAge(key) {
+      try {
+        const cached = localStorage.getItem(key);
+        if (!cached) return null;
+        const { timestamp } = JSON.parse(cached);
+        return Date.now() - timestamp;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // === Data Loading ===
+    async function loadGameData() {
+      // Check cache first
+      const cached = getCachedData('gameData');
+      if (cached) {
+        gameData = cached;
+        return;
+      }
+
+      try {
+        const results = await Promise.allSettled([
+          fetch('https://mg-api.ariedam.fr/data/plants').then(r => r.json()),
+          fetch('https://mg-api.ariedam.fr/data/eggs').then(r => r.json()),
+          fetch('https://mg-api.ariedam.fr/data/decor').then(r => r.json()).catch(() => ({})) // Decor endpoint may not exist
+        ]);
+
+        gameData = {
+          plants: results[0].status === 'fulfilled' ? results[0].value : {},
+          eggs: results[1].status === 'fulfilled' ? results[1].value : {},
+          decor: results[2].status === 'fulfilled' ? results[2].value : {}
+        };
+
+        setCachedData('gameData', gameData);
+      } catch (error) {
+        console.error('Failed to load game data:', error);
+        // Try to use stale cache as fallback
+        const staleCache = localStorage.getItem('gameData');
+        if (staleCache) {
+          gameData = JSON.parse(staleCache).data;
+        }
+      }
+    }
+
+    async function loadHistoryData(forceRefresh = false) {
+      // Rate limiting: prevent excessive calls
+      const timeSinceLastFetch = Date.now() - lastFetchTime;
+      if (!forceRefresh && timeSinceLastFetch < CONFIG.MIN_REFRESH_INTERVAL) {
+        console.log(`Rate limited: ${Math.ceil((CONFIG.MIN_REFRESH_INTERVAL - timeSinceLastFetch) / 1000)}s until next refresh`);
+        return;
+      }
+
+      // Prevent concurrent fetches
+      if (isFetching) {
+        console.log('Fetch already in progress, skipping...');
+        return;
+      }
+
+      // Check cache first
+      if (!forceRefresh) {
+        const cached = getCachedData('historyData');
+        const cacheAge = getCacheAge('historyData');
+        if (cached && cacheAge < CONFIG.CACHE_DURATION) {
+          historyData = cached.items;
+          document.getElementById('status-text').textContent = `Tracking ${historyData.length} items`;
+
+          const lastUpdated = new Date(cached.lastUpdated);
+          const cacheAgeMin = Math.floor(cacheAge / 60000);
+          document.getElementById('last-updated').textContent =
+            `Last updated: ${lastUpdated.toLocaleTimeString()} (cached ${cacheAgeMin}m ago)`;
+          return;
+        }
+      }
+
+      isFetching = true;
+      lastFetchTime = Date.now();
+
+      try {
+        const response = await fetch(CONFIG.API_URL, {
+          headers: {
+            'apikey': CONFIG.API_KEY,
+            'Content-Type': 'application/json'
+          },
+          signal: AbortSignal.timeout(10000) // 10s timeout
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Process history data from items object
+        historyData = [];
+
+        if (data.items) {
+          Object.entries(data.items).forEach(([key, itemData]) => {
+            // Parse key format: "shopType:itemId"
+            const [shopType, itemId] = key.split(':');
+
+            historyData.push({
+              itemId,
+              shopType,
+              totalOccurrences: itemData.totalOccurrences || 0,
+              totalQuantity: itemData.totalQuantity || 0,
+              lastSeen: itemData.lastSeen || null,
+              appearanceRate: itemData.appearanceRate || null,
+              estimatedNextTimestamp: itemData.estimatedNextTimestamp || null
+            });
+          });
+        }
+
+        // Cache the successful response
+        setCachedData('historyData', {
+          items: historyData,
+          lastUpdated: data.meta?.lastUpdated || Date.now()
+        });
+
+        document.getElementById('status-text').textContent = `Tracking ${historyData.length} items`;
+        if (data.meta?.lastUpdated) {
+          const date = new Date(data.meta.lastUpdated);
+          document.getElementById('last-updated').textContent = `Last updated: ${date.toLocaleTimeString()}`;
+        } else {
+          document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        retryCount = 0; // Reset retry count on success
+      } catch (error) {
+        console.error('Failed to load history:', error);
+
+        // Try to use cached data as fallback
+        const cached = getCachedData('historyData');
+        if (cached && cached.items) {
+          historyData = cached.items;
+          const lastUpdated = new Date(cached.lastUpdated);
+          const cacheAge = getCacheAge('historyData');
+          const cacheAgeMin = Math.floor(cacheAge / 60000);
+
+          document.getElementById('status-text').textContent = `⚠️ Using cached data (${historyData.length} items)`;
+          document.getElementById('last-updated').textContent =
+            `Last updated: ${lastUpdated.toLocaleTimeString()} (${cacheAgeMin}m ago)`;
+        } else {
+          document.getElementById('status-text').textContent = 'Error loading data';
+          document.getElementById('last-updated').textContent = error.message;
+        }
+
+        // Exponential backoff for retries
+        if (retryCount < CONFIG.MAX_RETRIES) {
+          retryCount++;
+          const delay = CONFIG.RETRY_DELAY * Math.pow(2, retryCount - 1);
+          console.log(`Retrying in ${delay / 1000}s... (attempt ${retryCount}/${CONFIG.MAX_RETRIES})`);
+          setTimeout(() => loadHistoryData(true), delay);
+        }
+      } finally {
+        isFetching = false;
+      }
+    }
+
+    // === Item Metadata Helpers ===
+    function getItemData(itemId, shopType) {
+      if (shopType === 'seed') {
+        return gameData.plants[itemId]?.seed;
+      } else if (shopType === 'egg') {
+        return gameData.eggs[itemId];
+      } else if (shopType === 'decor') {
+        return gameData.decor[itemId];
+      }
+      return null;
+    }
+
+    function getItemName(itemId, shopType) {
+      const data = getItemData(itemId, shopType);
+      return data?.name || itemId;
+    }
+
+    function getRarity(itemId, shopType) {
+      const data = getItemData(itemId, shopType);
+      return data?.rarity?.toLowerCase() || 'common';
+    }
+
+    function getCoinPrice(itemId, shopType) {
+      const data = getItemData(itemId, shopType);
+      return data?.coinPrice || 0;
+    }
+
+    function getSpriteUrl(itemId, shopType) {
+      const data = getItemData(itemId, shopType);
+      const spriteId = data?.spriteId;
+      if (!spriteId) return null;
+
+      if (shopType === 'seed') {
+        return `https://mg-api.ariedam.fr/sprites/plant/${spriteId}.png`;
+      } else if (shopType === 'egg') {
+        return `https://mg-api.ariedam.fr/sprites/egg/${spriteId}.png`;
+      } else if (shopType === 'decor') {
+        return `https://mg-api.ariedam.fr/sprites/decor/${spriteId}.png`;
+      }
+      return null;
+    }
+
+    function getCoinIconUrl() {
+      return 'https://mg-api.ariedam.fr/sprites/ui/Coin.png';
+    }
+
+    // === Formatting Helpers ===
+    function formatPrice(value) {
+      if (!value || value < 1000) return `${value}`;
+      const units = ['K', 'M', 'B', 'T', 'Q'];
+      let v = value;
+      let idx = -1;
+      while (v >= 1000 && idx < units.length - 1) {
+        v /= 1000;
+        idx++;
+      }
+      const rounded = v >= 10 ? Math.round(v) : Math.round(v * 10) / 10;
+      return `${rounded}${units[idx]}`;
+    }
+
+    function formatRelative(ms) {
+      if (!ms) return '-';
+      const diff = Date.now() - ms;
+      if (diff < 0) return 'just now';
+      const min = Math.floor(diff / 60000);
+      if (min < 1) return 'just now';
+      if (min < 60) return `${min}m ago`;
+      const hr = Math.floor(min / 60);
+      if (hr < 24) return `${hr}h ago`;
+      const day = Math.floor(hr / 24);
+      return `${day}d ago`;
+    }
+
+    function formatClock(ms) {
+      if (!ms) return '-';
+      const dt = new Date(ms);
+      return dt.toLocaleTimeString(undefined, {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    }
+
+    function formatRelativeDay(ms) {
+      const now = Date.now();
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+      const dayMs = 86400000;
+      const diffDays = Math.floor((startOfToday.getTime() - new Date(ms).setHours(0, 0, 0, 0)) / dayMs);
+      if (!Number.isFinite(diffDays) || diffDays <= 0) return null;
+      const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'always' });
+      return rtf.format(-diffDays, 'day');
+    }
+
+    function formatETA(estimatedNext) {
+      if (!estimatedNext) return '-';
+      const diff = estimatedNext - Date.now();
+      if (diff <= 0) return 'now';
+
+      const min = Math.ceil(diff / 60000);
+      if (min < 60) return `~${min}m`;
+      const hr = Math.ceil(min / 60);
+      if (hr < 24) return `~${hr}h`;
+      const day = Math.ceil(hr / 24);
+      return `~${day}d`;
+    }
+
+    function getETAColorClass(estimatedNext) {
+      if (!estimatedNext) return '';
+      const diff = estimatedNext - Date.now();
+      if (diff <= 0) return 'restock-eta-now';
+
+      const hours = diff / (60 * 60 * 1000);
+      if (hours < 1) return 'restock-eta-imminent';
+      if (hours < 6) return 'restock-eta-soon';
+      if (hours < 24) return 'restock-eta-today';
+
+      const days = diff / (24 * 60 * 60 * 1000);
+      if (days < 7) return 'restock-eta-week';
+      if (days < 14) return 'restock-eta-fortnight';
+      return 'restock-eta-far';
+    }
+
+    function ratePercent(rate) {
+      if (rate === null) return '-';
+      const pct = rate * 100;
+
+      let maxDecimals;
+      if (pct >= 80) maxDecimals = 0;
+      else if (pct >= 40) maxDecimals = 1;
+      else if (pct >= 10) maxDecimals = 2;
+      else if (pct >= 1) maxDecimals = 3;
+      else maxDecimals = 4;
+
+      const formatted = pct.toFixed(maxDecimals);
+      return `${parseFloat(formatted)}%`;
+    }
+
+    function getRateColorClass(rate) {
+      if (rate === null) return 'restock-rate-low';
+      const pct = rate * 100;
+      if (pct >= 80) return 'restock-rate-high';
+      if (pct >= 40) return 'restock-rate-mid';
+      return 'restock-rate-low';
+    }
+
+    // === Prediction Helpers ===
+    const SHOP_CYCLE_INTERVALS = {
+      seed: 6 * 60 * 60 * 1000, // 6 hours
+      egg: 6 * 60 * 60 * 1000,  // 6 hours
+      decor: 24 * 60 * 60 * 1000 // 24 hours
+    };
+
+    function predictItem(item) {
+      if (!item.lastSeen || item.totalOccurrences < 2) {
+        return {
+          ...item,
+          estimatedNextTimestamp: null,
+          appearanceRate: null,
+          averageQuantity: item.totalQuantity / Math.max(1, item.totalOccurrences),
+          isEmpty: true
+        };
+      }
+
+      // Simple prediction: assume regular intervals based on shop cycle
+      const interval = SHOP_CYCLE_INTERVALS[item.shopType];
+      const rate = item.totalOccurrences > 0 ? Math.min(1, item.totalOccurrences / 100) : 0; // Simplified rate
+      const avgQty = item.totalQuantity / item.totalOccurrences;
+
+      // Estimate next appearance
+      const timeSinceLastSeen = Date.now() - item.lastSeen;
+      const cyclesPassed = Math.floor(timeSinceLastSeen / interval);
+      const estimatedNext = item.lastSeen + ((cyclesPassed + 1) * interval);
+
+      return {
+        ...item,
+        estimatedNextTimestamp: estimatedNext,
+        appearanceRate: rate,
+        averageQuantity: avgQty,
+        isEmpty: false
+      };
+    }
+
+    function formatFrequency(rate, shopType) {
+      if (rate === null || rate <= 0) return '-';
+      const interval = SHOP_CYCLE_INTERVALS[shopType];
+      const expectedMs = interval / rate;
+
+      if (rate >= 0.95) return 'Every restock';
+
+      const min = Math.round(expectedMs / 60000);
+      if (min < 60) return `Every ~${min}m`;
+      const hr = Math.round(min / 60);
+      if (hr < 24) return `Every ~${hr}h`;
+      const day = Math.round(hr / 24);
+      return `Every ~${day}d`;
+    }
+
+    function formatAvgQty(qty) {
+      if (qty === null || qty <= 0) return '';
+      if (qty >= 100) return `~${Math.round(qty)} avg`;
+      if (qty >= 10) return `~${Math.round(qty)} avg`;
+      if (Number.isInteger(qty)) return `~${qty} avg`;
+      return `~${qty.toFixed(1)} avg`;
+    }
+
+    // === Render Functions ===
+    function renderPredictions() {
+      const container = document.getElementById('predictions-list');
+
+      if (trackedItems.size === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            Click an item in the History to show next restock estimation
+          </div>
+        `;
+        return;
+      }
+
+      const predictions = Array.from(trackedItems)
+        .map(key => {
+          const [shopType, itemId] = key.split(':');
+          const item = historyData.find(h => h.itemId === itemId && h.shopType === shopType);
+          if (!item) return null;
+          return predictItem(item);
+        })
+        .filter(p => p !== null)
+        .sort((a, b) => {
+          if (a.isEmpty && !b.isEmpty) return 1;
+          if (!a.isEmpty && b.isEmpty) return -1;
+          const rA = a.appearanceRate ?? -1;
+          const rB = b.appearanceRate ?? -1;
+          return rB - rA;
+        });
+
+      container.innerHTML = predictions.map(pred => {
+        const rarity = getRarity(pred.itemId, pred.shopType);
+        const spriteUrl = getSpriteUrl(pred.itemId, pred.shopType);
+        const tooltip = pred.isEmpty ? '' : `${formatAvgQty(pred.averageQuantity)}\n${formatFrequency(pred.appearanceRate, pred.shopType)}`;
+
+        return `
+          <div class="restock-pred-row" onclick="toggleTracking('${pred.shopType}', '${pred.itemId}')">
+            <div class="restock-pred-left">
+              <div class="restock-icon-wrap rarity-${rarity}">
+                ${spriteUrl ? `<img src="${spriteUrl}" class="restock-item-sprite" alt="${getItemName(pred.itemId, pred.shopType)}">` : ''}
+              </div>
+              <div class="restock-pred-text">
+                <div class="restock-pred-line1">
+                  <span class="restock-item-name restock-text-${rarity}">${getItemName(pred.itemId, pred.shopType)}</span>
+                </div>
+                <div class="restock-pred-line2">
+                  ${pred.isEmpty ? 'Not enough data' : `Seen ${formatRelative(pred.lastSeen)}`}
+                </div>
+              </div>
+            </div>
+            <div class="restock-pred-metrics">
+              ${pred.isEmpty ? '<div class="restock-rate-low">--</div>' : `
+                <div class="restock-pred-metric-wrap">
+                  <div class="restock-pred-metric-value restock-eta-value ${getETAColorClass(pred.estimatedNextTimestamp)}">
+                    ${formatETA(pred.estimatedNextTimestamp)}
+                  </div>
+                  <div class="restock-pred-metric-label">next</div>
+                </div>
+                <div class="restock-pred-metric-wrap" data-tooltip="${tooltip}">
+                  <div class="restock-pred-metric-value ${getRateColorClass(pred.appearanceRate)}">
+                    ${ratePercent(pred.appearanceRate)}
+                  </div>
+                  <div class="restock-pred-metric-label">rate</div>
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('') + `
+        <div class="empty-state" style="padding: 8px 12px; font-size: 11px; opacity: 0.5;">
+          Click to deselect the item in the Active Predictions
+        </div>
+      `;
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('history-table');
+
+      let filtered = historyData.filter(item => {
+        if (currentFilter !== 'all' && item.shopType !== currentFilter) return false;
+        if (currentSearch) {
+          const search = currentSearch.toLowerCase();
+          const name = getItemName(item.itemId, item.shopType).toLowerCase();
+          if (!name.includes(search) && !item.itemId.toLowerCase().includes(search)) return false;
+        }
+        const key = `${item.shopType}:${item.itemId}`;
+        return !trackedItems.has(key);
+      });
+
+      // Sort
+      if (sortColumn) {
+        filtered.sort((a, b) => {
+          let aVal, bVal;
+
+          if (sortColumn === 'item') {
+            aVal = getItemName(a.itemId, a.shopType).toLowerCase();
+            bVal = getItemName(b.itemId, b.shopType).toLowerCase();
+          } else if (sortColumn === 'shop') {
+            const shopOrder = { seed: 0, egg: 1, decor: 2 };
+            aVal = shopOrder[a.shopType];
+            bVal = shopOrder[b.shopType];
+          } else if (sortColumn === 'rarity') {
+            const rarityWeights = {
+              common: 0, uncommon: 1, rare: 2, legendary: 3,
+              mythical: 4, divine: 5, celestial: 6
+            };
+            aVal = rarityWeights[getRarity(a.itemId, a.shopType)];
+            bVal = rarityWeights[getRarity(b.itemId, b.shopType)];
+          } else if (sortColumn === 'price') {
+            aVal = getCoinPrice(a.itemId, a.shopType);
+            bVal = getCoinPrice(b.itemId, b.shopType);
+          } else if (sortColumn === 'qty') {
+            aVal = a.totalQuantity || 0;
+            bVal = b.totalQuantity || 0;
+          } else if (sortColumn === 'last') {
+            aVal = a.lastSeen || 0;
+            bVal = b.lastSeen || 0;
+          }
+
+          if (sortDirection === 'asc') {
+            return aVal > bVal ? 1 : -1;
+          } else {
+            return aVal < bVal ? 1 : -1;
+          }
+        });
+      }
+
+      const coinIcon = getCoinIconUrl();
+
+      container.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortTable('item')" style="width: 50%;">
+                Item
+                <span class="sort-indicator ${sortColumn === 'item' ? 'active' : ''}">
+                  ${sortColumn === 'item' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
+                </span>
+              </th>
+              <th onclick="sortTable('shop')" style="width: 10%; text-align: center;">
+                Shop
+                <span class="sort-indicator ${sortColumn === 'shop' ? 'active' : ''}">
+                  ${sortColumn === 'shop' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
+                </span>
+              </th>
+              <th onclick="sortTable('qty')" style="width: 15%; text-align: center;">
+                Quantity
+                <span class="sort-indicator ${sortColumn === 'qty' ? 'active' : ''}">
+                  ${sortColumn === 'qty' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
+                </span>
+              </th>
+              <th onclick="sortTable('last')" style="width: 15%; text-align: right;">
+                Seen
+                <span class="sort-indicator ${sortColumn === 'last' ? 'active' : ''}">
+                  ${sortColumn === 'last' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filtered.map(item => {
+              const rarity = getRarity(item.itemId, item.shopType);
+              const spriteUrl = getSpriteUrl(item.itemId, item.shopType);
+              const exact = {
+                primary: formatClock(item.lastSeen),
+                secondary: formatRelativeDay(item.lastSeen),
+                title: item.lastSeen ? new Date(item.lastSeen).toLocaleString() : '-'
+              };
+
+              return `
+                <tr onclick="toggleTracking('${item.shopType}', '${item.itemId}')">
+                  <td>
+                    <div class="restock-item-cell">
+                      <div class="restock-icon-wrap rarity-${rarity}">
+                        ${spriteUrl ? `<img src="${spriteUrl}" class="restock-item-sprite" alt="${getItemName(item.itemId, item.shopType)}">` : ''}
+                      </div>
+                      <div class="restock-item-info">
+                        <div class="restock-item-name restock-text-${rarity}">${getItemName(item.itemId, item.shopType)}</div>
+                        <div class="restock-item-sub">
+                          <span class="restock-price-wrap">
+                            <img src="${coinIcon}" class="restock-coin-icon" alt="Coins">
+                            <span>${formatPrice(getCoinPrice(item.itemId, item.shopType))}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="text-align: center;">
+                    <span class="shop-pill ${item.shopType}">${item.shopType[0].toUpperCase()}</span>
+                  </td>
+                  <td style="text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; opacity: 0.9;">
+                    ${formatPrice(item.totalQuantity || 0)}
+                  </td>
+                  <td>
+                    <div class="restock-time-cell" title="${exact.title}">
+                      <div style="font-weight: 600;">${exact.primary}</div>
+                      ${exact.secondary ? `<div style="opacity: 0.7; font-size: 11px;">${exact.secondary}</div>` : ''}
+                    </div>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state">No items found</div>';
+      }
+    }
+
+    // === Interaction Handlers ===
+    function toggleTracking(shopType, itemId) {
+      const key = `${shopType}:${itemId}`;
+      if (trackedItems.has(key)) {
+        trackedItems.delete(key);
+      } else {
+        trackedItems.add(key);
+      }
+      saveTrackedItems();
+      renderPredictions();
+      renderHistory();
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+      });
+      renderHistory();
+    }
+
+    function handleSearch(value) {
+      currentSearch = value.trim().toLowerCase();
+      renderHistory();
+    }
+
+    function sortTable(column) {
+      if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortColumn = column;
+        sortDirection = 'asc';
+      }
+      renderHistory();
+    }
+
+    // === Persistence ===
+    function saveTrackedItems() {
+      localStorage.setItem('trackedItems', JSON.stringify(Array.from(trackedItems)));
+    }
+
+    function loadTrackedItems() {
+      try {
+        const saved = localStorage.getItem('trackedItems');
+        if (saved) {
+          trackedItems = new Set(JSON.parse(saved));
+        }
+      } catch (e) {
+        console.error('Failed to load tracked items:', e);
+      }
+    }
+
+    // === Manual Refresh ===
+    async function manualRefresh() {
+      const btn = document.getElementById('refresh-btn');
+      if (!btn) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Refreshing...';
+
+      try {
+        await loadHistoryData(true); // Force refresh
+        renderPredictions();
+        renderHistory();
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔄 Refresh';
+      }
+    }
+
+    // === Init ===
+    async function init() {
+      loadTrackedItems();
+      await loadGameData();
+      await loadHistoryData();
+      renderPredictions();
+      renderHistory();
+
+      // Auto-refresh every 10 minutes (reduced from 5 to minimize API calls)
+      setInterval(async () => {
+        await loadHistoryData(); // Will use cache if too recent
+        renderPredictions();
+        renderHistory();
+      }, 10 * 60 * 1000);
+    }
+
+    // Start the app
+    init();
+  </script>
+</body>
+</html>
