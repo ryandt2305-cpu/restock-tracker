@@ -1075,21 +1075,26 @@
 
     function getSpriteUrl(itemId, shopType) {
       const data = getItemData(itemId, shopType);
-      const spriteId = data?.spriteId;
-      if (!spriteId) return null;
 
+      // The MG API provides full sprite URLs in the data
+      if (data?.sprite) {
+        return data.sprite;
+      }
+
+      // Fallback: construct URL from itemId
       if (shopType === 'seed') {
-        return `https://mg-api.ariedam.fr/sprites/plant/${spriteId}.png`;
+        return `https://mg-api.ariedam.fr/assets/sprites/seeds/${itemId}.png`;
       } else if (shopType === 'egg') {
-        return `https://mg-api.ariedam.fr/sprites/egg/${spriteId}.png`;
+        return `https://mg-api.ariedam.fr/assets/sprites/eggs/${itemId}.png`;
       } else if (shopType === 'decor') {
-        return `https://mg-api.ariedam.fr/sprites/decor/${spriteId}.png`;
+        return `https://mg-api.ariedam.fr/assets/sprites/decor/${itemId}.png`;
       }
       return null;
     }
 
     function getCoinIconUrl() {
-      return 'https://mg-api.ariedam.fr/sprites/ui/Coin.png';
+      // Use emoji as fallback since coin sprite doesn't exist
+      return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23fbbf24"><circle cx="12" cy="12" r="10" stroke="%23f59e0b" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="12" font-weight="bold" fill="%23fff">C</text></svg>';
     }
 
     // === Formatting Helpers ===
