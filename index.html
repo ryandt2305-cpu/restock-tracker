@@ -317,7 +317,6 @@
       image-rendering: pixelated;
       width: 32px;
       height: 32px;
-      background-repeat: no-repeat;
     }
 
     .restock-coin-atlas {
@@ -1946,15 +1945,16 @@
       const frame = getDecorAtlasFrame(itemId);
       if (!frame) return null;
       const target = 32;
-      const scale = Math.max(target / frame.w, target / frame.h);
+      const scale = Math.min(target / frame.w, target / frame.h);
       const bgW = 4096 * scale;
       const bgH = 7387 * scale;
-      const centerX = (frame.x + frame.w / 2) * scale;
-      const centerY = (frame.y + frame.h / 2) * scale;
-      const posX = target / 2 - centerX;
-      const posY = target / 2 - centerY;
+      const offsetX = (target - frame.w * scale) / 2;
+      const offsetY = (target - frame.h * scale) / 2;
+      const posX = -(frame.x * scale) + offsetX;
+      const posY = -(frame.y * scale) + offsetY;
       return `width:${target}px;height:${target}px;` +
         `background-image:url('./flat-sprites.webp');` +
+        `background-repeat:no-repeat;` +
         `background-size:${bgW}px ${bgH}px;` +
         `background-position:${posX}px ${posY}px;`;
     }
