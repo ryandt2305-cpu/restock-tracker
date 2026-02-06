@@ -1,4 +1,4 @@
-export const STATIC_ITEM_DATA = {
+﻿export const STATIC_ITEM_DATA = {
   "seed:Aloe": {
     "name": "Aloe Seed",
     "rarity": "common",
@@ -161,7 +161,7 @@ export const STATIC_ITEM_DATA = {
     "price": 150000,
     "expiryMs": null
   },
-  "seed:OrangeTulip": {
+  "seed:Tulip": {
     "name": "Tulip Seed",
     "rarity": "uncommon",
     "price": 600,
@@ -528,3 +528,4 @@ export const STATIC_ITEM_DATA = {
     "expiryMs": null
   }
 }
+

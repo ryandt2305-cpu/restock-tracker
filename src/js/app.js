@@ -197,7 +197,7 @@ function getItemMeta(itemId, shopType) {
 }
 
 function getItemName(itemId, shopType) {
-  if (shopType === "seed" && itemId === "OrangeTulip") return "Orange Tulip";
+  if (shopType === "seed" && itemId === "Tulip") return "Orange Tulip";
   const meta = getItemMeta(itemId, shopType);
   return meta?.name || itemId;
 }
@@ -891,3 +891,4 @@ export async function initApp() {
   renderPredictions();
   renderHistory();
 }
+
