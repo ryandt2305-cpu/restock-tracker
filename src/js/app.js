@@ -196,11 +196,7 @@ function getItemMeta(itemId, shopType) {
   return STATIC_ITEM_DATA[getItemKey(itemId, shopType)] || null;
 }
 
-function getItemName(itemId, shopType) {
-  if (shopType === "seed" && itemId === "Tulip") return "Orange Tulip";
-  const meta = getItemMeta(itemId, shopType);
-  return meta?.name || itemId;
-}
+function getItemName(itemId, shopType) {\n  const meta = getItemMeta(itemId, shopType);\n  return meta?.name || itemId;\n}
 
 function getRarity(itemId, shopType) {
   const meta = getItemMeta(itemId, shopType);
@@ -891,4 +887,5 @@ export async function initApp() {
   renderPredictions();
   renderHistory();
 }
+
 
