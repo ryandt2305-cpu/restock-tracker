@@ -312,6 +312,13 @@
       image-rendering: pixelated;
     }
 
+    .restock-decor-atlas {
+      display: block;
+      image-rendering: pixelated;
+      transform: scale(0.22);
+      transform-origin: center;
+    }
+
     .restock-pred-text {
       display: flex;
       flex-direction: column;
@@ -750,9 +757,6 @@
       <h1>Magic Garden Restock Tracker</h1>
     </div>
     <div class="header-controls">
-      <button class="theme-toggle" id="refresh-btn" style="display: none;" disabled>
-        🔄 Refresh
-      </button>
       <button class="theme-toggle" onclick="toggleTheme()">
         <span id="theme-icon">☀️</span> Toggle Theme
       </button>
@@ -1431,7 +1435,358 @@
   }
 };;;
 
-    // === Data Loading ===
+    const DECOR_ATLAS_FRAMES = {
+  "ColoredStringLightsSideways": {
+    "x": 3685,
+    "y": 2271,
+    "w": 122,
+    "h": 586
+  },
+  "MarbleArchSideways": {
+    "x": 3811,
+    "y": 2271,
+    "w": 97,
+    "h": 586
+  },
+  "StringLightsSideways": {
+    "x": 3912,
+    "y": 2271,
+    "w": 122,
+    "h": 586
+  },
+  "StoneArchSideways": {
+    "x": 4,
+    "y": 2895,
+    "w": 97,
+    "h": 583
+  },
+  "DecorShed": {
+    "x": 105,
+    "y": 2895,
+    "w": 280,
+    "h": 572
+  },
+  "WoodArchSide": {
+    "x": 504,
+    "y": 3482,
+    "w": 173,
+    "h": 533
+  },
+  "PetHutch": {
+    "x": 914,
+    "y": 4035,
+    "w": 326,
+    "h": 476
+  },
+  "HayBale": {
+    "x": 1244,
+    "y": 4035,
+    "w": 271,
+    "h": 472
+  },
+  "HayBaleSideways": {
+    "x": 1519,
+    "y": 4035,
+    "w": 271,
+    "h": 472
+  },
+  "MiniWizardTower": {
+    "x": 3257,
+    "y": 4035,
+    "w": 198,
+    "h": 423
+  },
+  "MarbleBridgeSideways": {
+    "x": 3459,
+    "y": 4035,
+    "w": 192,
+    "h": 420
+  },
+  "StoneBridgeSideways": {
+    "x": 3655,
+    "y": 4035,
+    "w": 193,
+    "h": 420
+  },
+  "WoodBridgeSideways": {
+    "x": 3852,
+    "y": 4035,
+    "w": 192,
+    "h": 420
+  },
+  "MarbleCaribou": {
+    "x": 1114,
+    "y": 4525,
+    "w": 175,
+    "h": 403
+  },
+  "MarbleFountain": {
+    "x": 1293,
+    "y": 4525,
+    "w": 316,
+    "h": 400
+  },
+  "StrawScarecrow": {
+    "x": 1835,
+    "y": 4525,
+    "w": 246,
+    "h": 398
+  },
+  "MarbleLampPost": {
+    "x": 2085,
+    "y": 4525,
+    "w": 310,
+    "h": 395
+  },
+  "StoneLampPost": {
+    "x": 2399,
+    "y": 4525,
+    "w": 344,
+    "h": 388
+  },
+  "WoodLampPost": {
+    "x": 2747,
+    "y": 4525,
+    "w": 344,
+    "h": 387
+  },
+  "WoodWindmill": {
+    "x": 3509,
+    "y": 4525,
+    "w": 283,
+    "h": 381
+  },
+  "WoodArch": {
+    "x": 416,
+    "y": 4942,
+    "w": 296,
+    "h": 376
+  },
+  "WoodBenchSideways": {
+    "x": 716,
+    "y": 4942,
+    "w": 147,
+    "h": 375
+  },
+  "StoneCaribou": {
+    "x": 867,
+    "y": 4942,
+    "w": 169,
+    "h": 370
+  },
+  "MarbleArch": {
+    "x": 1040,
+    "y": 4942,
+    "w": 355,
+    "h": 355
+  },
+  "StoneArch": {
+    "x": 1399,
+    "y": 4942,
+    "w": 356,
+    "h": 355
+  },
+  "Cauldron": {
+    "x": 3107,
+    "y": 4942,
+    "w": 297,
+    "h": 341
+  },
+  "MarbleBenchSideways": {
+    "x": 3408,
+    "y": 4942,
+    "w": 123,
+    "h": 340
+  },
+  "Birdhouse": {
+    "x": 3535,
+    "y": 4942,
+    "w": 152,
+    "h": 336
+  },
+  "WoodCaribou": {
+    "x": 3691,
+    "y": 4942,
+    "w": 164,
+    "h": 331
+  },
+  "ColoredStringLights": {
+    "x": 1237,
+    "y": 5323,
+    "w": 299,
+    "h": 325
+  },
+  "StringLights": {
+    "x": 1540,
+    "y": 5323,
+    "w": 299,
+    "h": 325
+  },
+  "StoneBenchSideways": {
+    "x": 339,
+    "y": 5656,
+    "w": 117,
+    "h": 306
+  },
+  "StoneBirdBath": {
+    "x": 460,
+    "y": 5656,
+    "w": 151,
+    "h": 305
+  },
+  "MarbleBridge": {
+    "x": 1171,
+    "y": 5656,
+    "w": 286,
+    "h": 300
+  },
+  "StoneBridge": {
+    "x": 1461,
+    "y": 5656,
+    "w": 286,
+    "h": 300
+  },
+  "WoodBridge": {
+    "x": 1751,
+    "y": 5656,
+    "w": 286,
+    "h": 300
+  },
+  "MarbleBlobling": {
+    "x": 2041,
+    "y": 5656,
+    "w": 231,
+    "h": 294
+  },
+  "LargeGravestoneSideways": {
+    "x": 3685,
+    "y": 6227,
+    "w": 64,
+    "h": 252
+  },
+  "MiniFairyKeep": {
+    "x": 3753,
+    "y": 6227,
+    "w": 204,
+    "h": 252
+  },
+  "StoneGnome": {
+    "x": 755,
+    "y": 6487,
+    "w": 178,
+    "h": 245
+  },
+  "MiniFairyForge": {
+    "x": 937,
+    "y": 6487,
+    "w": 187,
+    "h": 240
+  },
+  "WoodBench": {
+    "x": 1323,
+    "y": 6487,
+    "w": 258,
+    "h": 236
+  },
+  "LargeGravestone": {
+    "x": 2483,
+    "y": 6487,
+    "w": 155,
+    "h": 231
+  },
+  "MediumGravestoneSideways": {
+    "x": 3216,
+    "y": 6487,
+    "w": 64,
+    "h": 225
+  },
+  "LargeRock": {
+    "x": 3753,
+    "y": 6487,
+    "w": 244,
+    "h": 213
+  },
+  "MarbleBench": {
+    "x": 1364,
+    "y": 6742,
+    "w": 265,
+    "h": 197
+  },
+  "MarbleBenchBackwards": {
+    "x": 1633,
+    "y": 6742,
+    "w": 256,
+    "h": 196
+  },
+  "SmallGravestoneSideways": {
+    "x": 2230,
+    "y": 6742,
+    "w": 64,
+    "h": 194
+  },
+  "WoodOwl": {
+    "x": 2645,
+    "y": 6742,
+    "w": 179,
+    "h": 190
+  },
+  "MediumGravestone": {
+    "x": 3723,
+    "y": 6742,
+    "w": 155,
+    "h": 187
+  },
+  "MiniFairyCottage": {
+    "x": 4,
+    "y": 6958,
+    "w": 127,
+    "h": 172
+  },
+  "MediumRock": {
+    "x": 653,
+    "y": 6958,
+    "w": 203,
+    "h": 162
+  },
+  "SmallGravestone": {
+    "x": 1018,
+    "y": 6958,
+    "w": 138,
+    "h": 151
+  },
+  "StoneBench": {
+    "x": 1160,
+    "y": 6958,
+    "w": 257,
+    "h": 150
+  },
+  "WoodBenchBackwards": {
+    "x": 1421,
+    "y": 6958,
+    "w": 259,
+    "h": 150
+  },
+  "SmallRock": {
+    "x": 265,
+    "y": 7266,
+    "w": 133,
+    "h": 115
+  },
+  "MiniWizardTowerOrnamentAmberMoon": {
+    "x": 2357,
+    "y": 7266,
+    "w": 71,
+    "h": 87
+  },
+  "MiniWizardTowerOrnamentDawn": {
+    "x": 2432,
+    "y": 7266,
+    "w": 71,
+    "h": 87
+  }
+};
+
+// === Data Loading ===
     async function loadGameData() {
       gameData = { plants: {}, eggs: {}, decor: {} };
     }
@@ -1586,10 +1941,28 @@
       if (shopType === 'egg') {
         return `https://mg-api.ariedam.fr/assets/sprites/pets/${itemId}.png`;
       }
-      if (shopType === 'decor') {
-        return `https://mg-api.ariedam.fr/assets/sprites/decor/${itemId}.png`;
-      }
       return null;
+    }
+
+    function getDecorAtlasFrame(itemId) {
+      if (DECOR_ATLAS_FRAMES[itemId]) return DECOR_ATLAS_FRAMES[itemId];
+      const sideways = `${itemId}Sideways`;
+      if (DECOR_ATLAS_FRAMES[sideways]) return DECOR_ATLAS_FRAMES[sideways];
+      const back = `${itemId}Backwards`;
+      if (DECOR_ATLAS_FRAMES[back]) return DECOR_ATLAS_FRAMES[back];
+      const side = `${itemId}Side`;
+      if (DECOR_ATLAS_FRAMES[side]) return DECOR_ATLAS_FRAMES[side];
+      return null;
+    }
+
+    function getDecorSpriteStyle(itemId) {
+      const frame = getDecorAtlasFrame(itemId);
+      if (!frame) return null;
+      return `width:${frame.w}px;height:${frame.h}px;` +
+        `background-image:url('../spritecustomiser/assets/flat-sprites.webp');` +
+        `background-position:-${frame.x}px -${frame.y}px;` +
+        `background-repeat:no-repeat;` +
+        `background-size:4096px 7387px;`;
     }
 
     function applySpriteFallback(img) {
@@ -1853,7 +2226,12 @@
           <div class="restock-pred-row" onclick="toggleTracking('${pred.shopType}', '${pred.itemId}')">
             <div class="restock-pred-left">
             <div class="restock-icon-wrap rarity-${rarity}">
-              ${spriteUrl ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(pred.itemId, pred.shopType)}">` : ''}
+              ${pred.shopType === 'decor'
+                ? (() => {
+                    const style = getDecorSpriteStyle(pred.itemId);
+                    return style ? `<div class="restock-item-sprite restock-decor-atlas" style="${style}" aria-label="${getItemName(pred.itemId, pred.shopType)}"></div>` : '';
+                  })()
+                : (spriteUrl ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(pred.itemId, pred.shopType)}">` : '')}
             </div>
               <div class="restock-pred-text">
                 <div class="restock-pred-line1">
@@ -2017,7 +2395,12 @@
                   <td>
                     <div class="restock-item-cell">
                       <div class="restock-icon-wrap rarity-${rarity}">
-                        ${spriteUrl ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(item.itemId, item.shopType)}">` : ''}
+                        ${item.shopType === 'decor'
+                          ? (() => {
+                              const style = getDecorSpriteStyle(item.itemId);
+                              return style ? `<div class="restock-item-sprite restock-decor-atlas" style="${style}" aria-label="${getItemName(item.itemId, item.shopType)}"></div>` : '';
+                            })()
+                          : (spriteUrl ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(item.itemId, item.shopType)}">` : '')}
                       </div>
                       <div class="restock-item-info">
                         <div class="restock-item-name restock-text-${rarity}">${getItemName(item.itemId, item.shopType)}</div>
