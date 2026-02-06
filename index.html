@@ -750,7 +750,7 @@
       <h1>Magic Garden Restock Tracker</h1>
     </div>
     <div class="header-controls">
-      <button class="theme-toggle" id="refresh-btn" onclick="manualRefresh()">
+      <button class="theme-toggle" id="refresh-btn" style="display: none;" disabled>
         🔄 Refresh
       </button>
       <button class="theme-toggle" onclick="toggleTheme()">
@@ -819,8 +819,8 @@
     const CONFIG = {
       API_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqdXZyeWpncmpjaGJoaml4d3poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMDYyODMsImV4cCI6MjA4NTY4MjI4M30.MqQCBG-UMR4HYJU44Tz2orHUj9gMgJTMJtxpb_MHeps',
       API_URL: 'https://xjuvryjgrjchbhjixwzh.supabase.co/functions/v1/restock-history',
-      CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
-      MIN_REFRESH_INTERVAL: 30 * 1000, // 30 seconds minimum between refreshes
+      CACHE_DURATION: 24 * 60 * 60 * 1000, // 24 hours
+      MIN_REFRESH_INTERVAL: 24 * 60 * 60 * 1000, // 24 hours minimum between refreshes
       MAX_RETRIES: 3,
       RETRY_DELAY: 2000
     };
@@ -1429,7 +1429,7 @@
     "price": 500000,
     "expiryMs": null
   }
-};;
+};;;
 
     // === Data Loading ===
     async function loadGameData() {
@@ -1590,6 +1590,17 @@
         return `https://mg-api.ariedam.fr/assets/sprites/decor/${itemId}.png`;
       }
       return null;
+    }
+
+    function applySpriteFallback(img) {
+      if (!img || img.dataset.fallbackApplied) return;
+      img.dataset.fallbackApplied = '1';
+      img.onerror = () => {
+        const fallback = img.dataset.fallbackSrc;
+        if (fallback && img.src !== fallback) {
+          img.src = fallback;
+        }
+      };
     }
 
     function getCoinIconUrl() {
@@ -1842,7 +1853,7 @@
           <div class="restock-pred-row" onclick="toggleTracking('${pred.shopType}', '${pred.itemId}')">
             <div class="restock-pred-left">
             <div class="restock-icon-wrap rarity-${rarity}">
-              ${spriteUrl ? `<img src="${spriteUrl}" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(pred.itemId, pred.shopType)}">` : ''}
+              ${spriteUrl ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(pred.itemId, pred.shopType)}">` : ''}
             </div>
               <div class="restock-pred-text">
                 <div class="restock-pred-line1">
@@ -1923,6 +1934,7 @@
             bVal = b.lastSeen || 0;
           }
 
+          if (aVal === bVal) return 0;
           if (sortDirection === 'asc') {
             return aVal > bVal ? 1 : -1;
           }
@@ -1952,6 +1964,10 @@
           const nameB = getItemName(b.itemId, b.shopType);
           return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
         });
+      }
+
+      if (!sortColumn) {
+        sortDirection = 'asc';
       }
 
       const coinIcon = getCoinIconUrl();
@@ -2001,7 +2017,7 @@
                   <td>
                     <div class="restock-item-cell">
                       <div class="restock-icon-wrap rarity-${rarity}">
-                        ${spriteUrl ? `<img src="${spriteUrl}" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(item.itemId, item.shopType)}">` : ''}
+                        ${spriteUrl ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(item.itemId, item.shopType)}">` : ''}
                       </div>
                       <div class="restock-item-info">
                         <div class="restock-item-name restock-text-${rarity}">${getItemName(item.itemId, item.shopType)}</div>
@@ -2037,6 +2053,8 @@
         container.innerHTML = '<div class="empty-state">No items found</div>';
       }
       prefetchVisibleSprites();
+      const spriteImages = container.querySelectorAll('img.restock-item-sprite');
+      spriteImages.forEach((img) => applySpriteFallback(img));
       bindPrefetchScroll();
     }
 
@@ -2094,20 +2112,8 @@
 
     // === Manual Refresh ===
     async function manualRefresh() {
-      const btn = document.getElementById('refresh-btn');
-      if (!btn) return;
-
-      btn.disabled = true;
-      btn.textContent = 'Refreshing...';
-
-      try {
-        await loadHistoryData(true); // Force refresh
-        renderPredictions();
-        renderHistory();
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '🔄 Refresh';
-      }
+      // Manual refresh disabled to minimize DB calls.
+      return;
     }
 
     // === Init ===
@@ -2118,12 +2124,7 @@
       renderPredictions();
       renderHistory();
 
-      // Auto-refresh every 10 minutes (reduced from 5 to minimize API calls)
-      setInterval(async () => {
-        await loadHistoryData(); // Will use cache if too recent
-        renderPredictions();
-        renderHistory();
-      }, 10 * 60 * 1000);
+      // Auto-refresh disabled to minimize DB calls. Data refreshes on 24h cache expiry.
     }
 
     // Start the app
