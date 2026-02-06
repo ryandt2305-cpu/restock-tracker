@@ -819,6 +819,11 @@
     let isFetching = false;
     let retryCount = 0;
 
+    async function loadGameData() {
+      // Game data is fully static in this page.
+      return;
+    }
+
     // === Theme Toggle ===
     function toggleTheme() {
       document.body.classList.toggle('theme-light');
