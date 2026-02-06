@@ -1,4 +1,4 @@
-:root {
+html, body {\r\n  max-width: 100%;\r\n  overflow-x: hidden;\r\n}\r\n\r\n:root {
   --bg: #0f0f0f;
   --panel: #1a1a1a;
   --soft: #2a2a2a;
