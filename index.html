@@ -824,6 +824,97 @@
       return;
     }
 
+    async function loadHistoryData(forceRefresh = false) {
+      const timeSinceLastFetch = Date.now() - lastFetchTime;
+      if (!forceRefresh && timeSinceLastFetch < CONFIG.MIN_REFRESH_INTERVAL) {
+        return;
+      }
+      if (isFetching) return;
+
+      if (!forceRefresh) {
+        const cached = getCachedData('historyData');
+        const cacheAge = getCacheAge('historyData');
+        if (cached && cacheAge !== null && cacheAge < CONFIG.CACHE_DURATION) {
+          historyData = cached.items;
+          document.getElementById('status-text').textContent = `Tracking ${historyData.length} items`;
+          const lastUpdated = new Date(cached.lastUpdated);
+          const cacheAgeMin = Math.floor(cacheAge / 60000);
+          document.getElementById('last-updated').textContent =
+            `Last updated: ${lastUpdated.toLocaleTimeString()} (cached ${cacheAgeMin}m ago)`;
+          return;
+        }
+      }
+
+      isFetching = true;
+      lastFetchTime = Date.now();
+
+      try {
+        const response = await fetch(CONFIG.API_URL, {
+          headers: {
+            'apikey': CONFIG.API_KEY,
+            'Content-Type': 'application/json'
+          },
+          signal: AbortSignal.timeout(10000)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        historyData = [];
+        if (data.items) {
+          Object.entries(data.items).forEach(([key, itemData]) => {
+            const [shopType, itemId] = key.split(':');
+            historyData.push({
+              itemId,
+              shopType,
+              totalOccurrences: itemData.totalOccurrences || 0,
+              totalQuantity: itemData.totalQuantity || 0,
+              lastSeen: itemData.lastSeen || null,
+              appearanceRate: itemData.appearanceRate || null,
+              estimatedNextTimestamp: itemData.estimatedNextTimestamp || null
+            });
+          });
+        }
+
+        setCachedData('historyData', {
+          items: historyData,
+          lastUpdated: data.meta?.lastUpdated || Date.now()
+        });
+
+        document.getElementById('status-text').textContent = `Tracking ${historyData.length} items`;
+        if (data.meta?.lastUpdated) {
+          const date = new Date(data.meta.lastUpdated);
+          document.getElementById('last-updated').textContent = `Last updated: ${date.toLocaleTimeString()}`;
+        } else {
+          document.getElementById('last-updated').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        retryCount = 0;
+      } catch (error) {
+        console.error('Failed to load history:', error);
+
+        const cached = getCachedData('historyData');
+        if (cached && cached.items) {
+          historyData = cached.items;
+          const lastUpdated = new Date(cached.lastUpdated);
+          const cacheAge = getCacheAge('historyData') ?? 0;
+          const cacheAgeMin = Math.floor(cacheAge / 60000);
+
+          document.getElementById('status-text').textContent = `⚠️ Using cached data (${historyData.length} items)`;
+          document.getElementById('last-updated').textContent =
+            `Last updated: ${lastUpdated.toLocaleTimeString()} (${cacheAgeMin}m ago)`;
+        } else {
+          document.getElementById('status-text').textContent = 'Error loading data';
+          document.getElementById('last-updated').textContent = error.message;
+        }
+      } finally {
+        isFetching = false;
+      }
+    }
+
     // === Theme Toggle ===
     function toggleTheme() {
       document.body.classList.toggle('theme-light');
