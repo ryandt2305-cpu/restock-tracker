@@ -827,7 +827,7 @@
 
     // === State ===
     let historyData = [];
-    let gameData = { plants: {}, eggs: {}, decor: {} };
+      let gameData = { plants: {}, eggs: {}, decor: {} };
     let trackedItems = new Set();
     let currentFilter = 'all';
     let currentSearch = '';
@@ -899,37 +899,101 @@
       }
     }
 
+    // === Static Item Metadata ===
+    const STATIC_ITEM_DATA = {
+      "seed:Aloe": { "name": "Aloe Seed", "rarity": "common", "price": 135 },
+      "seed:Apple": { "name": "Apple Seed", "rarity": "uncommon", "price": 500 },
+      "seed:Bamboo": { "name": "Bamboo Seed", "rarity": "mythic", "price": 400000 },
+      "seed:Banana": { "name": "Banana Seed", "rarity": "legendary", "price": 15000 },
+      "seed:Beet": { "name": "Beet Seed", "rarity": "common", "price": 210 },
+      "seed:Blueberry": { "name": "Blueberry Seed", "rarity": "uncommon", "price": 400 },
+      "seed:BurrosTail": { "name": "BurrosTail", "rarity": "legendary", "price": 93000 },
+      "seed:Cabbage": { "name": "Cabbage Seed", "rarity": "common", "price": 30 },
+      "seed:Cacao": { "name": "Cacao Bean", "rarity": "divine", "price": 10000000 },
+      "seed:Cactus": { "name": "Cactus Seed", "rarity": "mythic", "price": 250000 },
+      "seed:Camellia": { "name": "Camellia Seed", "rarity": "legendary", "price": 55000 },
+      "seed:Carrot": { "name": "Carrot Seed", "rarity": "common", "price": 10 },
+      "seed:Chrysanthemum": { "name": "Chrysanthemum Seed", "rarity": "mythic", "price": 670000 },
+      "seed:Coconut": { "name": "Coconut Seed", "rarity": "legendary", "price": 10000 },
+      "seed:Corn": { "name": "Corn Kernel", "rarity": "rare", "price": 1300 },
+      "seed:Daffodil": { "name": "Daffodil Seed", "rarity": "rare", "price": 1000 },
+      "seed:DawnCelestial": { "name": "Dawnbinder Pod", "rarity": "celestial", "price": 10000000000 },
+      "seed:DragonFruit": { "name": "Dragon Fruit Seed", "rarity": "divine", "price": 5000000 },
+      "seed:Echeveria": { "name": "Echeveria Cutting", "rarity": "rare", "price": 4200 },
+      "seed:FavaBean": { "name": "Fava Bean", "rarity": "uncommon", "price": 250 },
+      "seed:Gentian": { "name": "Gentian Seed", "rarity": "rare", "price": 9000 },
+      "seed:Grape": { "name": "Grape Seed", "rarity": "mythic", "price": 850000 },
+      "seed:Lemon": { "name": "Lemon Seed", "rarity": "divine", "price": 2000000 },
+      "seed:Lily": { "name": "Lily Seed", "rarity": "legendary", "price": 20000 },
+      "seed:Lychee": { "name": "Lychee Pit", "rarity": "divine", "price": 25000000 },
+      "seed:MoonCelestial": { "name": "Moonbinder Pod", "rarity": "celestial", "price": 50000000000 },
+      "seed:Mushroom": { "name": "Mushroom Spore", "rarity": "mythic", "price": 150000 },
+      "seed:OrangeTulip": { "name": "Tulip Seed", "rarity": "uncommon", "price": 600 },
+      "seed:PassionFruit": { "name": "Passion Fruit Seed", "rarity": "divine", "price": 2750000 },
+      "seed:Pear": { "name": "Pear Seed", "rarity": "rare", "price": 6000 },
+      "seed:Pepper": { "name": "Pepper Seed", "rarity": "divine", "price": 1000000 },
+      "seed:PineTree": { "name": "Pinecone", "rarity": "legendary", "price": 12000 },
+      "seed:Poinsettia": { "name": "Poinsettia Seed", "rarity": "mythic", "price": 500000 },
+      "seed:Pumpkin": { "name": "Pumpkin Seed", "rarity": "rare", "price": 3000 },
+      "seed:Starweaver": { "name": "Starweaver Pod", "rarity": "celestial", "price": 1000000000 },
+      "seed:Strawberry": { "name": "Strawberry Seed", "rarity": "common", "price": 50 },
+      "seed:Sunflower": { "name": "Sunflower Seed", "rarity": "divine", "price": 100000000 },
+      "seed:Tomato": { "name": "Tomato Seed", "rarity": "uncommon", "price": 800 },
+      "seed:VioletCort": { "name": "Violet Cort Spore", "rarity": "mythic", "price": 520000 },
+      "seed:Watermelon": { "name": "Watermelon Seed", "rarity": "rare", "price": 2500 },
+      "egg:CommonEgg": { "name": "Common Egg", "rarity": "common", "price": 100000 },
+      "egg:LegendaryEgg": { "name": "Legendary Egg", "rarity": "legendary", "price": 100000000 },
+      "egg:MythicalEgg": { "name": "Mythical Egg", "rarity": "mythic", "price": 1000000000 },
+      "egg:RareEgg": { "name": "Rare Egg", "rarity": "rare", "price": 10000000 },
+      "egg:SnowEgg": { "name": "Snow Egg", "rarity": "legendary", "price": 200000000 },
+      "egg:UncommonEgg": { "name": "Uncommon Egg", "rarity": "uncommon", "price": 1000000 },
+      "egg:WinterEgg": { "name": "Winter Egg", "rarity": "legendary", "price": 80000000 },
+      "decor:Cauldron": { "name": "Cauldron", "rarity": "legendary", "price": 666000000 },
+      "decor:ColoredStringLights": { "name": "Colored String Lights", "rarity": "common", "price": 8000 },
+      "decor:DecorShed": { "name": "Decor Shed", "rarity": "divine", "price": 60000000000 },
+      "decor:HayBale": { "name": "Hay Bale", "rarity": "common", "price": 6000 },
+      "decor:LargeGravestone": { "name": "Large Gravestone", "rarity": "rare", "price": 50000000 },
+      "decor:LargeRock": { "name": "Large Garden Rock", "rarity": "common", "price": 5000 },
+      "decor:MarbleArch": { "name": "Marble Arch", "rarity": "rare", "price": 100000000 },
+      "decor:MarbleBench": { "name": "Marble Bench", "rarity": "rare", "price": 75000000 },
+      "decor:MarbleBlobling": { "name": "Marble Blobling", "rarity": "rare", "price": 300000000 },
+      "decor:MarbleBridge": { "name": "Marble Bridge", "rarity": "rare", "price": 150000000 },
+      "decor:MarbleCaribou": { "name": "Marble Caribou", "rarity": "rare", "price": 50000000 },
+      "decor:MarbleFountain": { "name": "Marble Fountain", "rarity": "rare", "price": 450000000 },
+      "decor:MarbleLampPost": { "name": "Marble Lamp Post", "rarity": "rare", "price": 200000000 },
+      "decor:MediumGravestone": { "name": "Medium Gravestone", "rarity": "uncommon", "price": 500000 },
+      "decor:MediumRock": { "name": "Medium Garden Rock", "rarity": "common", "price": 2500 },
+      "decor:MiniFairyCottage": { "name": "Mini Fairy Cottage", "rarity": "rare", "price": 500000000 },
+      "decor:MiniFairyForge": { "name": "Mini Fairy Forge", "rarity": "legendary", "price": 5000000000 },
+      "decor:MiniFairyKeep": { "name": "Mini Fairy Keep", "rarity": "mythic", "price": 25000000000 },
+      "decor:MiniWizardTower": { "name": "Mini Wizard Tower", "rarity": "mythic", "price": 75000000000 },
+      "decor:PetHutch": { "name": "Pet Hutch", "rarity": "divine", "price": 80000000000 },
+      "decor:SeedSilo": { "name": "Seed Silo", "rarity": "divine", "price": 100000000000 },
+      "decor:SmallGravestone": { "name": "Small Gravestone", "rarity": "common", "price": 8000 },
+      "decor:SmallRock": { "name": "Small Garden Rock", "rarity": "common", "price": 1000 },
+      "decor:StoneArch": { "name": "Stone Arch", "rarity": "uncommon", "price": 4000000 },
+      "decor:StoneBench": { "name": "Stone Bench", "rarity": "uncommon", "price": 1000000 },
+      "decor:StoneBirdbath": { "name": "Stone Birdbath", "rarity": "uncommon", "price": 10000000 },
+      "decor:StoneBridge": { "name": "Stone Bridge", "rarity": "uncommon", "price": 5000000 },
+      "decor:StoneCaribou": { "name": "Stone Caribou", "rarity": "uncommon", "price": 750000 },
+      "decor:StoneGnome": { "name": "Stone Gnome", "rarity": "uncommon", "price": 9000000 },
+      "decor:StoneLampPost": { "name": "Stone Lamp Post", "rarity": "uncommon", "price": 8000000 },
+      "decor:StrawScarecrow": { "name": "Straw Scarecrow", "rarity": "legendary", "price": 1000000000 },
+      "decor:StringLights": { "name": "String Lights", "rarity": "common", "price": 7000 },
+      "decor:WoodArch": { "name": "Wood Arch", "rarity": "common", "price": 20000 },
+      "decor:WoodBench": { "name": "Wood Bench", "rarity": "common", "price": 10000 },
+      "decor:WoodBirdhouse": { "name": "Wood Birdhouse", "rarity": "common", "price": 100000 },
+      "decor:WoodBridge": { "name": "Wood Bridge", "rarity": "common", "price": 40000 },
+      "decor:WoodCaribou": { "name": "Wood Caribou", "rarity": "common", "price": 9000 },
+      "decor:WoodLampPost": { "name": "Wood Lamp Post", "rarity": "common", "price": 80000 },
+      "decor:WoodOwl": { "name": "Wood Owl", "rarity": "common", "price": 90000 },
+      "decor:WoodPergola": { "name": "Wood Pergola", "rarity": "common", "price": 30000 },
+      "decor:WoodWindmill": { "name": "Wood Windmill", "rarity": "common", "price": 500000 }
+    };
+
     // === Data Loading ===
     async function loadGameData() {
-      // Check cache first
-      const cached = getCachedData('gameData');
-      if (cached) {
-        gameData = cached;
-        return;
-      }
-
-      try {
-        const results = await Promise.allSettled([
-          fetch('https://mg-api.ariedam.fr/data/plants').then(r => r.json()),
-          fetch('https://mg-api.ariedam.fr/data/eggs').then(r => r.json()),
-          fetch('https://mg-api.ariedam.fr/data/decor').then(r => r.json()).catch(() => ({})) // Decor endpoint may not exist
-        ]);
-
-        gameData = {
-          plants: results[0].status === 'fulfilled' ? results[0].value : {},
-          eggs: results[1].status === 'fulfilled' ? results[1].value : {},
-          decor: results[2].status === 'fulfilled' ? results[2].value : {}
-        };
-
-        setCachedData('gameData', gameData);
-      } catch (error) {
-        console.error('Failed to load game data:', error);
-        // Try to use stale cache as fallback
-        const staleCache = localStorage.getItem('gameData');
-        if (staleCache) {
-          gameData = JSON.parse(staleCache).data;
-        }
-      }
+      gameData = { plants: {}, eggs: {}, decor: {} };
     }
 
     async function loadHistoryData(forceRefresh = false) {
@@ -1047,54 +1111,41 @@
     }
 
     // === Item Metadata Helpers ===
-    function getItemData(itemId, shopType) {
-      if (shopType === 'seed') {
-        return gameData.plants[itemId]?.seed;
-      } else if (shopType === 'egg') {
-        return gameData.eggs[itemId];
-      } else if (shopType === 'decor') {
-        return gameData.decor[itemId];
-      }
-      return null;
+    function getItemKey(itemId, shopType) {
+      return `${shopType}:${itemId}`;
+    }
+
+    function getItemMeta(itemId, shopType) {
+      return STATIC_ITEM_DATA[getItemKey(itemId, shopType)] || null;
     }
 
     function getItemName(itemId, shopType) {
-      const data = getItemData(itemId, shopType);
-      return data?.name || itemId;
+      const meta = getItemMeta(itemId, shopType);
+      return meta?.name || itemId;
     }
 
     function getRarity(itemId, shopType) {
-      const data = getItemData(itemId, shopType);
-      return data?.rarity?.toLowerCase() || 'common';
+      const meta = getItemMeta(itemId, shopType);
+      return meta?.rarity || 'common';
     }
 
     function getCoinPrice(itemId, shopType) {
-      const data = getItemData(itemId, shopType);
-      return data?.coinPrice || 0;
+      const meta = getItemMeta(itemId, shopType);
+      return meta?.price || 0;
     }
 
     function getSpriteUrl(itemId, shopType) {
-      const data = getItemData(itemId, shopType);
-
-      // The MG API provides full sprite URLs in the data
-      if (data?.sprite) {
-        return data.sprite;
-      }
-
-      // Fallback: construct URL from itemId
       if (shopType === 'seed') {
-        return `https://mg-api.ariedam.fr/assets/sprites/seeds/${itemId}.png`;
-      } else if (shopType === 'egg') {
-        return `https://mg-api.ariedam.fr/assets/sprites/eggs/${itemId}.png`;
-      } else if (shopType === 'decor') {
-        return `https://mg-api.ariedam.fr/assets/sprites/decor/${itemId}.png`;
+        return `https://magiccircle.gg/external/sprite/seed/${itemId}.png`;
+      }
+      if (shopType === 'egg') {
+        return `https://magiccircle.gg/external/sprite/pet/${itemId}.png`;
       }
       return null;
     }
 
     function getCoinIconUrl() {
-      // Use emoji as fallback since coin sprite doesn't exist
-      return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23fbbf24"><circle cx="12" cy="12" r="10" stroke="%23f59e0b" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-size="12" font-weight="bold" fill="%23fff">C</text></svg>';
+      return './coin.png';
     }
 
     // === Formatting Helpers ===
@@ -1294,9 +1345,9 @@
         return `
           <div class="restock-pred-row" onclick="toggleTracking('${pred.shopType}', '${pred.itemId}')">
             <div class="restock-pred-left">
-              <div class="restock-icon-wrap rarity-${rarity}">
-                ${spriteUrl ? `<img src="${spriteUrl}" class="restock-item-sprite" alt="${getItemName(pred.itemId, pred.shopType)}">` : ''}
-              </div>
+            <div class="restock-icon-wrap rarity-${rarity}">
+              ${spriteUrl ? `<img src="${spriteUrl}" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(pred.itemId, pred.shopType)}">` : ''}
+            </div>
               <div class="restock-pred-text">
                 <div class="restock-pred-line1">
                   <span class="restock-item-name restock-text-${rarity}">${getItemName(pred.itemId, pred.shopType)}</span>
@@ -1430,7 +1481,7 @@
                   <td>
                     <div class="restock-item-cell">
                       <div class="restock-icon-wrap rarity-${rarity}">
-                        ${spriteUrl ? `<img src="${spriteUrl}" class="restock-item-sprite" alt="${getItemName(item.itemId, item.shopType)}">` : ''}
+                        ${spriteUrl ? `<img src="${spriteUrl}" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(item.itemId, item.shopType)}">` : ''}
                       </div>
                       <div class="restock-item-info">
                         <div class="restock-item-name restock-text-${rarity}">${getItemName(item.itemId, item.shopType)}</div>
