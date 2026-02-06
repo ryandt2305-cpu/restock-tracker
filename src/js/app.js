@@ -302,9 +302,9 @@ async function loadHistoryData(forceRefresh = false) {
           totalOccurrences: itemData.totalOccurrences || 0,
           totalQuantity: itemData.totalQuantity || 0,
           lastSeen: itemData.lastSeen || null,
-          recentTimestamps: itemData.recentTimestamps || null,
-          appearanceRate: itemData.appearanceRate || null,
+appearanceRate: itemData.appearanceRate || null,
           estimatedNextTimestamp: itemData.estimatedNextTimestamp || null,
+          averageIntervalMs: itemData.averageIntervalMs || null,
         });
       });
     }
@@ -459,24 +459,7 @@ function countDistinctCycles(timestamps, cycleMs) {
 }
 
 function calculateAppearanceRate(item) {
-  const interval = SHOP_CYCLE_INTERVALS[item.shopType];
-  const recent = Array.isArray(item.recentTimestamps) ? item.recentTimestamps : null;
-  if (!recent || recent.length < 2) {
-    return null;
-  }
-
-  const now = nowMs();
-  const maxWindowMs = Math.min(14 * 24 * 60 * 60 * 1000, 180 * interval);
-  const cutoff = now - maxWindowMs;
-  const windowed = recent
-    .map((x) => (typeof x === "number" ? x : Number(x)))
-    .filter((x) => Number.isFinite(x) && x >= cutoff && x <= now);
-
-  if (windowed.length < 2) return null;
-
-  const appearedCycles = countDistinctCycles(windowed, interval);
-  const observedCycles = Math.max(1, Math.floor(maxWindowMs / interval));
-  return clamp01(appearedCycles / observedCycles);
+  return item?.appearanceRate ?? null;
 }
 
 function predictItem(item) {
@@ -490,13 +473,29 @@ function predictItem(item) {
     };
   }
 
-  const interval = SHOP_CYCLE_INTERVALS[item.shopType];
+  const shopInterval = SHOP_CYCLE_INTERVALS[item.shopType];
   const rate = calculateAppearanceRate(item);
-  const avgQty = item.totalQuantity / item.totalOccurrences;
 
-  const timeSinceLastSeen = nowMs() - item.lastSeen;
-  const cyclesPassed = Math.floor(timeSinceLastSeen / interval);
-  const estimatedNext = item.lastSeen + (cyclesPassed + 1) * interval;
+  let expectedIntervalMs = item.averageIntervalMs ?? null;
+  if (expectedIntervalMs === null && rate !== null && rate > 0) {
+    expectedIntervalMs = Math.round(shopInterval / rate);
+  }
+
+  let estimatedNext = item.estimatedNextTimestamp ?? null;
+  if (estimatedNext === null && expectedIntervalMs !== null) {
+    estimatedNext = item.lastSeen + expectedIntervalMs;
+  }
+
+  if (estimatedNext !== null && expectedIntervalMs !== null && expectedIntervalMs > 0) {
+    const now = nowMs();
+    if (estimatedNext < now) {
+      const elapsed = now - item.lastSeen;
+      const cycles = Math.ceil(elapsed / expectedIntervalMs);
+      estimatedNext = item.lastSeen + cycles * expectedIntervalMs;
+    }
+  }
+
+  const avgQty = item.averageQuantity ?? (item.totalQuantity / item.totalOccurrences);
 
   return {
     ...item,

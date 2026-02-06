@@ -1,3 +1,794 @@
-﻿html, body {\n  max-width: 100%;\n  overflow-x: hidden;\n}\n\n     /* === Reset & Base === */     * {       margin: 0;       padding: 0;       box-sizing: border-box;     }      :root {       /* Dark theme (default) */       --bg: rgba(10, 12, 18, 0.6);       --fg: #e5e7eb;       --muted: rgba(229, 231, 235, 0.08);       --soft: rgba(229, 231, 235, 0.05);       --accent: #60a5fa;       --border: rgba(148, 163, 184, 0.2);       --shadow: rgba(0, 0, 0, 0.45);       --paper: #1a1d24;        /* Layout */       --radius: 18px;       --radius-sm: 10px;       --spacing-xs: 6px;       --spacing-sm: 8px;       --spacing-md: 12px;       --spacing-lg: 16px;       --glass-blur: 14px;       --font-size-sm: 12px;        /* Rarity colors (game-authentic) */       --rarity-common: #E7E7E7;       --rarity-uncommon: #67BD4D;       --rarity-rare: #0071C6;       --rarity-legendary: #FFC734;       --rarity-mythical: #9944A7;       --rarity-divine: #FF7835;       --rarity-celestial: #FF00FF;        /* Rainbow gradient */       --rainbow-text-gradient: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #ff00ff);        /* Font */       --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;     }      /* Light theme */     body.theme-light {       --bg: rgba(255, 255, 255, 0.7);       --fg: #0f172a;       --muted: rgba(15, 23, 42, 0.06);       --soft: rgba(15, 23, 42, 0.04);       --accent: #2563eb;       --border: rgba(15, 23, 42, 0.12);       --shadow: rgba(2, 6, 23, 0.2);       --paper: #FDFBF7;       --rainbow-text-gradient: linear-gradient(90deg, #b000b0, #d00000, #b08000, #008000, #0000b0, #4b0082, #9400d3);     }      body {       font-family: var(--font-ui);       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);       color: var(--fg);       min-height: 100vh;       -webkit-font-smoothing: antialiased;       padding: 20px;       transition: background 0.3s ease;     }      body.theme-light {       background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);     }      /* === Header === */     .header {       max-width: 1200px;       margin: 0 auto 24px;       display: flex;       justify-content: space-between;       align-items: center;       flex-wrap: wrap;       gap: 16px;     }      .header-title {       display: flex;       align-items: center;       gap: 12px;     }      .header-title h1 {       font-size: 28px;       font-weight: 700;       background: linear-gradient(135deg, var(--accent), #a855f7);       -webkit-background-clip: text;       background-clip: text;       color: transparent;     }      .header-controls {       display: flex;       align-items: center;       gap: 12px;     }      /* Theme Toggle */     .theme-toggle {       background: var(--bg);       backdrop-filter: blur(var(--glass-blur));       border: 1px solid var(--border);       border-radius: var(--radius-sm);       padding: 8px 12px;       color: var(--fg);       font-size: 14px;       cursor: pointer;       transition: all 0.2s ease;       font-family: var(--font-ui);     }      .theme-toggle:hover {       border-color: var(--accent);       box-shadow: 0 4px 12px var(--shadow);     }      /* === Container === */     .container {       max-width: 1200px;       margin: 0 auto;       display: flex;       flex-direction: column;       gap: var(--spacing-md);     }      /* === Status Bar === */     .restock-status-bar {       background: var(--bg);       backdrop-filter: blur(var(--glass-blur));       border: 1px solid var(--border);       border-radius: var(--radius);       padding: 0 var(--spacing-xs);       min-height: 32px;       display: flex;       justify-content: space-between;       align-items: center;       font-size: var(--font-size-sm);       color: var(--fg);       opacity: 0.9;       transition: border-color 0.2s ease;     }      .restock-status-bar:hover {       border-color: color-mix(in oklab, var(--border) 80%, var(--accent));     }      .restock-status-left {       display: flex;       align-items: center;       gap: var(--spacing-sm);     }      .restock-status-right {       opacity: 0.7;       font-variant-numeric: tabular-nums;     }      .status-indicator {       width: 8px;       height: 8px;       border-radius: 50%;       background: #22c55e;       animation: pulse 2s ease-in-out infinite;     }      @keyframes pulse {       0%, 100% { opacity: 1; }       50% { opacity: 0.5; }     }      /* === Card === */     .restock-card {       background: var(--bg);       backdrop-filter: blur(var(--glass-blur));       border: 1px solid var(--border);       border-radius: var(--radius);       overflow: hidden;       transition: border-color 0.2s ease;     }      .restock-card:hover {       border-color: color-mix(in oklab, var(--border) 80%, var(--accent));     }      .card-header {       padding: 16px 20px;       border-bottom: 1px solid var(--border);       display: flex;       justify-content: space-between;       align-items: center;       cursor: pointer;       user-select: none;     }      .card-header h2 {       font-size: 18px;       font-weight: 700;       color: var(--fg);     }      .card-header .toggle-icon {       color: var(--fg);       opacity: 0.6;       transition: transform 0.2s ease;     }      .card.collapsed .toggle-icon {       transform: rotate(-90deg);     }      .card-content {       max-height: 1000px;       overflow: hidden;       transition: max-height 0.3s ease;     }      .card.collapsed .card-content {       max-height: 0;     }      /* === Predictions === */     .restock-pred-list {       display: flex;       flex-direction: column;       gap: 2px;       padding: var(--spacing-sm);     }      .restock-pred-row {       display: flex;       justify-content: space-between;       align-items: center;       padding: 10px 12px;       gap: 12px;       border-radius: var(--radius-sm);       background: color-mix(in oklab, var(--bg) 50%, transparent);       border: 1px solid transparent;       min-height: 52px;       transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease;       cursor: pointer;     }      .restock-pred-row:hover {       transform: scale(1.01);       background: var(--soft);       border-color: var(--border);       box-shadow: 0 4px 12px var(--shadow);       z-index: 2;     }      .restock-pred-left {       display: flex;       align-items: center;       gap: 12px;       min-width: 0;       flex: 1;       max-width: calc(100% - 200px);     }      .restock-icon-wrap {       position: relative;       width: 42px;       height: 42px;       border-radius: 10px;       background: var(--soft);       border: 2px solid var(--border);       display: flex;       align-items: center;       justify-content: center;       flex-shrink: 0;       transition: border-color 0.2s ease, box-shadow 0.2s ease;     }      /* Rarity Borders */     .restock-icon-wrap.rarity-common { border-color: var(--rarity-common); }     .restock-icon-wrap.rarity-uncommon { border-color: var(--rarity-uncommon); }     .restock-icon-wrap.rarity-rare { border-color: var(--rarity-rare); }     .restock-icon-wrap.rarity-legendary {       border-color: var(--rarity-legendary);       box-shadow: 0 0 8px color-mix(in oklab, var(--rarity-legendary) 30%, transparent);     }     .restock-icon-wrap.rarity-mythical {       border-color: var(--rarity-mythical);       box-shadow: 0 0 10px color-mix(in oklab, var(--rarity-mythical) 40%, transparent);     }     .restock-icon-wrap.rarity-divine {       border-color: var(--rarity-divine);       box-shadow: 0 0 12px color-mix(in oklab, var(--rarity-divine) 50%, transparent);     }     .restock-icon-wrap.rarity-celestial {       border-color: var(--rarity-celestial);       box-shadow: 0 0 12px color-mix(in oklab, var(--rarity-celestial) 50%, transparent);     }      .restock-item-sprite {       width: 32px;       height: 32px;       object-fit: contain;       image-rendering: pixelated;     }      .restock-decor-icon {       display: block;       width: 32px;       height: 32px;       object-fit: contain;       image-rendering: pixelated;     }      .restock-pred-text {       display: flex;       flex-direction: column;       gap: 3px;       min-width: 0;     }      .restock-pred-line1 {       display: flex;       align-items: center;       gap: 6px;     }      .restock-item-name {       font-weight: 700;       font-size: 14px;       white-space: nowrap;       overflow: hidden;       text-overflow: ellipsis;       line-height: 1.2;     }      /* Rarity Text Colors */     .restock-text-common { color: var(--fg); }     .restock-text-uncommon { color: var(--rarity-uncommon); }     .restock-text-rare { color: var(--rarity-rare); }     .restock-text-legendary { color: var(--rarity-legendary); }     .restock-text-mythical { color: var(--rarity-mythical); }     .restock-text-divine { color: var(--rarity-divine); }     .restock-text-celestial { color: var(--rarity-celestial); }     .restock-text-rainbow {       background-image: var(--rainbow-text-gradient);       -webkit-background-clip: text;       background-clip: text;       color: transparent;     }      .restock-pred-line2 {       font-size: 12px;       opacity: 0.7;       font-variant-numeric: tabular-nums;       white-space: nowrap;       overflow: hidden;       text-overflow: ellipsis;       line-height: 1.2;     }      .restock-pred-metrics {       display: flex;       gap: 40px;       align-items: center;       flex-shrink: 0;     }      .restock-pred-metric-wrap {       position: relative;       display: flex;       flex-direction: column;       align-items: flex-end;       min-width: 52px;       width: 52px;       cursor: help;     }      .restock-pred-metric-value {       font-size: 20px;       font-weight: 700;       font-variant-numeric: tabular-nums;       letter-spacing: -0.5px;       line-height: 1.2;       color: var(--fg);     }      .restock-pred-metric-label {       font-size: 10px;       opacity: 0.5;       text-transform: uppercase;       letter-spacing: 0.5px;     }      /* ETA Colors */     .restock-eta-now { color: #10b981 !important; }     .restock-eta-imminent { color: #22c55e !important; }     .restock-eta-soon { color: #84cc16 !important; }     .restock-eta-today { color: #eab308 !important; }     .restock-eta-week { color: #f97316 !important; }     .restock-eta-fortnight { color: #f87171 !important; }     .restock-eta-far { color: #ef4444 !important; }      /* Rate Colors */     .restock-rate-high { color: #4ade80; }     .restock-rate-mid { color: #fbbf24; }     .restock-rate-low { color: #f87171; }      /* Tooltip */     .restock-pred-metric-wrap[data-tooltip]:hover::after {       content: attr(data-tooltip);       position: absolute;       bottom: 100%;       right: 0;       margin-bottom: 10px;       padding: 10px 14px;       background: color-mix(in oklab, var(--bg) 95%, var(--fg));       backdrop-filter: blur(8px);       border: 1px solid color-mix(in oklab, var(--border) 60%, transparent);       border-radius: 8px;       color: var(--fg);       font-size: 13px;       font-weight: 500;       line-height: 1.5;       white-space: pre-line;       z-index: 100;       box-shadow: 0 4px 16px color-mix(in oklab, var(--shadow) 40%, transparent);       pointer-events: none;       animation: tooltip-fade-in 0.15s ease-out;     }      @keyframes tooltip-fade-in {       from {         opacity: 0;         transform: translateY(4px);       }       to {         opacity: 1;         transform: translateY(0);       }     }      /* === History Table === */     .restock-filter-bar {       display: flex;       align-items: center;       gap: var(--spacing-sm);       padding: var(--spacing-md);       padding-bottom: 0;       margin-bottom: 12px;       flex-wrap: wrap;     }      .filter-group {       display: flex;       gap: 6px;     }      .filter-btn {       padding: 6px 12px;       background: var(--soft);       border: 1px solid var(--border);       border-radius: var(--radius-sm);       color: var(--fg);       font-size: 12px;       font-weight: 600;       cursor: pointer;       transition: all 0.2s ease;       font-family: var(--font-ui);     }      .filter-btn:hover {       background: var(--muted);       border-color: var(--accent);     }      .filter-btn.active {       background: var(--accent);       border-color: var(--accent);       color: white;     }      .search-bar {       flex: 1;       min-width: 140px;     }      .search-input {       width: 100%;       padding: 8px 12px;       background: color-mix(in oklab, var(--soft) 80%, transparent);       border: 1px solid var(--border);       border-radius: var(--radius-sm);       color: var(--fg);       font-size: 13px;       font-family: var(--font-ui);       transition: all 0.2s ease;     }      .search-input:focus {       outline: 2px solid color-mix(in oklab, var(--accent) 45%, transparent);       border-color: var(--accent);     }      .search-input::placeholder {       color: var(--fg);       opacity: 0.5;     }       param($m) $m.Value       .history-table table {       width: 100%;       border-collapse: separate;       border-spacing: 0 2px;     }      .history-table thead th {       padding: 8px 12px;       text-align: left;       font-size: 11px;       font-weight: 700;       text-transform: uppercase;       letter-spacing: 0.5px;       color: var(--fg);       opacity: 0.6;       position: sticky;       top: 0;       background: var(--bg);       z-index: 1;       cursor: pointer;       user-select: none;     }      .history-table thead th:hover {       opacity: 1;     }      .history-table tbody tr {       transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease;       cursor: pointer;       position: relative;     }      .history-table tbody tr:hover {       transform: scale(1.01);       background: var(--soft);       z-index: 2;       box-shadow: 0 4px 12px var(--shadow);     }      .history-table tbody td {       padding: 8px 12px;       border-top: 1px solid transparent;       border-bottom: 1px solid transparent;     }      .history-table tbody tr:hover td {       border-color: var(--border);     }      .history-table tbody td:first-child {       border-left: 1px solid transparent;       border-radius: var(--radius-sm) 0 0 var(--radius-sm);     }      .history-table tbody td:last-child {       border-right: 1px solid transparent;       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;     }      .history-table tbody tr:hover td:first-child {       border-left-color: var(--border);     }      .history-table tbody tr:hover td:last-child {       border-right-color: var(--border);     }      .restock-item-cell {       display: flex;       align-items: center;       gap: 12px;       padding: 4px 0;     }      .restock-item-info {       display: flex;       flex-direction: column;       justify-content: center;       gap: 3px;       min-width: 0;     }      .restock-item-sub {       font-size: 12px;       opacity: 0.9;       display: flex;       align-items: center;       gap: 6px;       line-height: 1;     }      .restock-tracked-icon {       color: var(--rarity-legendary);       font-size: 12px;       filter: drop-shadow(0 0 2px color-mix(in oklab, var(--rarity-legendary) 50%, transparent));     }      .restock-price-wrap {       display: flex;       align-items: center;       gap: 3px;       color: var(--rarity-legendary);       font-weight: 700;     }      .restock-coin-icon {       width: 14px;       height: 14px;       object-fit: contain;       display: block;     }      .restock-time-cell {       font-variant-numeric: tabular-nums;       font-weight: 600;       opacity: 0.9;       display: flex;       flex-direction: column;       align-items: flex-end;       line-height: 1.1;       white-space: nowrap;     }       /* Empty State */     .empty-state {       padding: 40px 20px;       text-align: center;       opacity: 0.6;       font-size: 14px;       line-height: 1.6;     }      /* Loading */     .loading {       display: flex;       justify-content: center;       align-items: center;       padding: 40px;       gap: 8px;     }      .loading-spinner {       width: 20px;       height: 20px;       border: 2px solid var(--border);       border-top-color: var(--accent);       border-radius: 50%;       animation: spin 0.8s linear infinite;     }      @keyframes spin {       to { transform: rotate(360deg); }     }      /* Responsive */     @media (max-width: 768px) {       .header-title h1 {         font-size: 22px;       }        .restock-pred-metrics {         gap: 12px;       }        .restock-pred-metric-wrap {         min-width: 48px;         width: 48px;       }        .restock-pred-left {         max-width: calc(100% - 120px);       }         param($m) $m.Value         .restock-icon-wrap {         width: 36px;         height: 36px;       }        .restock-item-sprite {         width: 28px;         height: 28px;       }        .restock-item-name {         font-size: 13px;       }     }      /* Sort indicator */     .sort-indicator {       display: inline-block;       margin-left: 4px;       opacity: 0.5;     }      .sort-indicator.active {       opacity: 1;       color: var(--accent);     }   
+﻿html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
-\n\n@media (max-width: 480px) {\n  body { padding: 12px; }\n  .header { margin-bottom: 12px; }\n  .restock-status-bar { flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 12px; }\n  .restock-pred-metrics { gap: 10px; }\n  .restock-pred-metric-value { font-size: 18px; }\n  .history-table { max-height: 60vh; }\n  .history-table thead th { padding: 8px 8px; }\n  .history-table tbody td { padding: 8px 8px; }\n}\n
+:root {
+  --bg: rgba(10, 12, 18, 0.6);
+  --fg: #e5e7eb;
+  --muted: rgba(229, 231, 235, 0.08);
+  --soft: rgba(229, 231, 235, 0.05);
+  --accent: #60a5fa;
+  --border: rgba(148, 163, 184, 0.2);
+  --shadow: rgba(0, 0, 0, 0.45);
+  --paper: #1a1d24;
+
+  --radius: 18px;
+  --radius-sm: 10px;
+  --spacing-xs: 6px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --glass-blur: 14px;
+  --font-size-sm: 12px;
+
+  --rarity-common: #E7E7E7;
+  --rarity-uncommon: #67BD4D;
+  --rarity-rare: #0071C6;
+  --rarity-legendary: #FFC734;
+  --rarity-mythical: #9944A7;
+  --rarity-divine: #FF7835;
+  --rarity-celestial: #FF00FF;
+
+  --rainbow-text-gradient: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00ffff, #ff00ff);
+
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+}
+
+body.theme-light {
+  --bg: rgba(255, 255, 255, 0.7);
+  --fg: #0f172a;
+  --muted: rgba(15, 23, 42, 0.06);
+  --soft: rgba(15, 23, 42, 0.04);
+  --accent: #2563eb;
+  --border: rgba(15, 23, 42, 0.12);
+  --shadow: rgba(2, 6, 23, 0.2);
+  --paper: #FDFBF7;
+  --rainbow-text-gradient: linear-gradient(90deg, #b000b0, #d00000, #b08000, #008000, #0000b0, #4b0082, #9400d3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: var(--fg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  padding: 20px;
+  transition: background 0.3s ease;
+}
+
+body.theme-light {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.header {
+  max-width: 1200px;
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-title h1 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-toggle {
+  background: var(--bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: var(--fg);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-ui);
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.restock-status-bar {
+  background: var(--bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 var(--spacing-xs);
+  min-height: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+  color: var(--fg);
+  opacity: 0.9;
+  transition: border-color 0.2s ease;
+}
+
+.restock-status-bar:hover {
+  border-color: color-mix(in oklab, var(--border) 80%, var(--accent));
+}
+
+.restock-status-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.restock-status-right {
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.restock-card {
+  background: var(--bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.restock-card:hover {
+  border-color: color-mix(in oklab, var(--border) 80%, var(--accent));
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.card-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.card-header .toggle-icon {
+  color: var(--fg);
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.card.collapsed .toggle-icon {
+  transform: rotate(-90deg);
+}
+
+.card-content {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.card.collapsed .card-content {
+  max-height: 0;
+}
+
+.restock-pred-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--spacing-sm);
+}
+
+.restock-pred-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  gap: 12px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, var(--bg) 50%, transparent);
+  border: 1px solid transparent;
+  min-height: 52px;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.restock-pred-row:hover {
+  transform: scale(1.01);
+  background: var(--soft);
+  border-color: var(--border);
+  box-shadow: 0 4px 12px var(--shadow);
+  z-index: 2;
+}
+
+.restock-pred-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+  max-width: calc(100% - 200px);
+}
+
+.restock-icon-wrap {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--soft);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.restock-icon-wrap.rarity-common {
+  border-color: var(--rarity-common);
+}
+
+.restock-icon-wrap.rarity-uncommon {
+  border-color: var(--rarity-uncommon);
+}
+
+.restock-icon-wrap.rarity-rare {
+  border-color: var(--rarity-rare);
+}
+
+.restock-icon-wrap.rarity-legendary {
+  border-color: var(--rarity-legendary);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--rarity-legendary) 30%, transparent);
+}
+
+.restock-icon-wrap.rarity-mythical {
+  border-color: var(--rarity-mythical);
+  box-shadow: 0 0 10px color-mix(in oklab, var(--rarity-mythical) 40%, transparent);
+}
+
+.restock-icon-wrap.rarity-divine {
+  border-color: var(--rarity-divine);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--rarity-divine) 50%, transparent);
+}
+
+.restock-icon-wrap.rarity-celestial {
+  border-color: var(--rarity-celestial);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--rarity-celestial) 50%, transparent);
+}
+
+.restock-item-sprite,
+.restock-decor-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.restock-pred-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.restock-pred-line1 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.restock-item-name {
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.restock-text-common {
+  color: var(--fg);
+}
+
+.restock-text-uncommon {
+  color: var(--rarity-uncommon);
+}
+
+.restock-text-rare {
+  color: var(--rarity-rare);
+}
+
+.restock-text-legendary {
+  color: var(--rarity-legendary);
+}
+
+.restock-text-mythical {
+  color: var(--rarity-mythical);
+}
+
+.restock-text-divine {
+  color: var(--rarity-divine);
+}
+
+.restock-text-celestial {
+  color: var(--rarity-celestial);
+}
+
+.restock-text-rainbow {
+  background-image: var(--rainbow-text-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.restock-pred-line2 {
+  font-size: 12px;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.restock-pred-metrics {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.restock-pred-metric-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 52px;
+  width: 52px;
+  cursor: help;
+}
+
+.restock-pred-metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+  color: var(--fg);
+}
+
+.restock-pred-metric-label {
+  font-size: 10px;
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.restock-eta-now {
+  color: #10b981 !important;
+}
+
+.restock-eta-imminent {
+  color: #22c55e !important;
+}
+
+.restock-eta-soon {
+  color: #84cc16 !important;
+}
+
+.restock-eta-today {
+  color: #eab308 !important;
+}
+
+.restock-eta-week {
+  color: #f97316 !important;
+}
+
+.restock-eta-fortnight {
+  color: #f87171 !important;
+}
+
+.restock-eta-far {
+  color: #ef4444 !important;
+}
+
+.restock-rate-high {
+  color: #4ade80;
+}
+
+.restock-rate-mid {
+  color: #fbbf24;
+}
+
+.restock-rate-low {
+  color: #f87171;
+}
+
+.restock-pred-metric-wrap[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  background: color-mix(in oklab, var(--bg) 95%, var(--fg));
+  backdrop-filter: blur(8px);
+  border: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
+  border-radius: 8px;
+  color: var(--fg);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: pre-line;
+  z-index: 100;
+  box-shadow: 0 4px 16px color-mix(in oklab, var(--shadow) 40%, transparent);
+  pointer-events: none;
+  animation: tooltip-fade-in 0.15s ease-out;
+}
+
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.restock-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  padding-bottom: 0;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  gap: 6px;
+}
+
+.filter-btn {
+  padding: 6px 12px;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--fg);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-ui);
+}
+
+.filter-btn:hover {
+  background: var(--muted);
+  border-color: var(--accent);
+}
+
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.search-bar {
+  flex: 1;
+  min-width: 140px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  background: color-mix(in oklab, var(--soft) 80%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--fg);
+  font-size: 13px;
+  font-family: var(--font-ui);
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: 2px solid color-mix(in oklab, var(--accent) 45%, transparent);
+  border-color: var(--accent);
+}
+
+.search-input::placeholder {
+  color: var(--fg);
+  opacity: 0.5;
+}
+
+.history-table {
+  width: 100%;
+  padding: var(--spacing-sm);
+  height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.history-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 2px;
+}
+
+.history-table thead th {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--fg);
+  opacity: 0.6;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.history-table thead th:hover {
+  opacity: 1;
+}
+
+.history-table tbody tr {
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background-color 0.15s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.history-table tbody tr:hover {
+  transform: scale(1.01);
+  background: var(--soft);
+  z-index: 2;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.history-table tbody td {
+  padding: 8px 12px;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+}
+
+.history-table tbody tr:hover td {
+  border-color: var(--border);
+}
+
+.history-table tbody td:first-child {
+  border-left: 1px solid transparent;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.history-table tbody td:last-child {
+  border-right: 1px solid transparent;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.history-table tbody tr:hover td:first-child {
+  border-left-color: var(--border);
+}
+
+.history-table tbody tr:hover td:last-child {
+  border-right-color: var(--border);
+}
+
+.restock-item-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.restock-item-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.restock-item-sub {
+  font-size: 12px;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.restock-price-wrap {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--rarity-legendary);
+  font-weight: 700;
+}
+
+.restock-coin-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  display: block;
+}
+
+.restock-time-cell {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  opacity: 0.9;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  opacity: 0.6;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  gap: 8px;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sort-indicator {
+  display: inline-block;
+  margin-left: 4px;
+  opacity: 0.5;
+}
+
+.sort-indicator.active {
+  opacity: 1;
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .header-title h1 {
+    font-size: 22px;
+  }
+
+  .restock-pred-metrics {
+    gap: 12px;
+  }
+
+  .restock-pred-metric-wrap {
+    min-width: 48px;
+    width: 48px;
+  }
+
+  .restock-pred-left {
+    max-width: calc(100% - 120px);
+  }
+
+  .restock-icon-wrap {
+    width: 36px;
+    height: 36px;
+  }
+
+  .restock-item-sprite {
+    width: 28px;
+    height: 28px;
+  }
+
+  .restock-item-name {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 12px;
+  }
+
+  .header {
+    margin-bottom: 12px;
+  }
+
+  .restock-status-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+
+  .restock-pred-metrics {
+    gap: 10px;
+  }
+
+  .restock-pred-metric-value {
+    font-size: 18px;
+  }
+
+  .history-table {
+    height: 60vh;
+  }
+
+  .history-table thead th {
+    padding: 8px 8px;
+  }
+
+  .history-table tbody td {
+    padding: 8px 8px;
+  }
+}
