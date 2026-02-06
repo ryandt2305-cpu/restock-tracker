@@ -1411,9 +1411,11 @@
     "price": 500000,
     "expiryMs": null
   }
-};;;
+};
 
-          const meta = getItemMeta(itemId, shopType);
+    function getItemName(itemId, shopType) {
+      if (shopType === 'seed' && itemId === 'OrangeTulip') return 'Orange Tulip';
+      const meta = getItemMeta(itemId, shopType);
       return meta?.name || itemId;
     }
 
