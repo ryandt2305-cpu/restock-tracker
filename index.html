@@ -319,6 +319,13 @@
       transform-origin: center;
     }
 
+    .restock-coin-atlas {
+      display: inline-block;
+      image-rendering: pixelated;
+      transform: scale(0.15);
+      transform-origin: center;
+    }
+
     .restock-pred-text {
       display: flex;
       flex-direction: column;
@@ -1786,7 +1793,9 @@
   }
 };
 
-// === Data Loading ===
+    const COIN_ATLAS_FRAME = { x: 956, y: 7266, w: 96, h: 96 };
+
+    // === Data Loading ===
     async function loadGameData() {
       gameData = { plants: {}, eggs: {}, decor: {} };
     }
@@ -1959,7 +1968,16 @@
       const frame = getDecorAtlasFrame(itemId);
       if (!frame) return null;
       return `width:${frame.w}px;height:${frame.h}px;` +
-        `background-image:url('../spritecustomiser/assets/flat-sprites.webp');` +
+        `background-image:url('./flat-sprites.webp');` +
+        `background-position:-${frame.x}px -${frame.y}px;` +
+        `background-repeat:no-repeat;` +
+        `background-size:4096px 7387px;`;
+    }
+
+    function getCoinSpriteStyle() {
+      const frame = COIN_ATLAS_FRAME;
+      return `width:${frame.w}px;height:${frame.h}px;` +
+        `background-image:url('./flat-sprites.webp');` +
         `background-position:-${frame.x}px -${frame.y}px;` +
         `background-repeat:no-repeat;` +
         `background-size:4096px 7387px;`;
@@ -1974,10 +1992,6 @@
           img.src = fallback;
         }
       };
-    }
-
-    function getCoinIconUrl() {
-      return './coin.png';
     }
 
     const prefetchedSpriteUrls = new Set();
@@ -2348,7 +2362,7 @@
         sortDirection = 'asc';
       }
 
-      const coinIcon = getCoinIconUrl();
+      // coin sprite now uses atlas
 
       container.innerHTML = `
         <table>
@@ -2406,7 +2420,7 @@
                         <div class="restock-item-name restock-text-${rarity}">${getItemName(item.itemId, item.shopType)}</div>
                         <div class="restock-item-sub">
                           <span class="restock-price-wrap">
-                            <img src="${coinIcon}" class="restock-coin-icon" alt="Coins">
+                            <span class="restock-coin-icon restock-coin-atlas" style="${getCoinSpriteStyle()}" aria-label="Coins"></span>
                             <span>${formatPrice(getCoinPrice(item.itemId, item.shopType))}</span>
                           </span>
                         </div>
