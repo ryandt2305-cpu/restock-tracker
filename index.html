@@ -1509,6 +1509,15 @@
   }
 };
 
+    function getItemKey(itemId, shopType) {
+      return `${shopType}:${itemId}`;
+    }
+
+    function getItemMeta(itemId, shopType) {
+      const key = getItemKey(itemId, shopType);
+      return STATIC_ITEM_DATA[key] || null;
+    }
+
     function getItemName(itemId, shopType) {
       if (shopType === 'seed' && itemId === 'OrangeTulip') return 'Orange Tulip';
       const meta = getItemMeta(itemId, shopType);
