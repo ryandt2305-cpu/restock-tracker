@@ -1,0 +1,536 @@
+{
+  "seed": {
+    "Aloe": {
+      "name": "Aloe Seed",
+      "coinPrice": 135,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "Apple": {
+      "name": "Apple Seed",
+      "coinPrice": 500,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "Bamboo": {
+      "name": "Bamboo Seed",
+      "coinPrice": 400000,
+      "rarity": "Mythic",
+      "expiryMs": null
+    },
+    "Banana": {
+      "name": "Banana Seed",
+      "coinPrice": 15000,
+      "rarity": "Legendary",
+      "expiryMs": null
+    },
+    "Beet": {
+      "name": "Beet Seed",
+      "coinPrice": 210,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "Blueberry": {
+      "name": "Blueberry Seed",
+      "coinPrice": 400,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "BurrosTail": {
+      "name": null,
+      "coinPrice": 93000,
+      "rarity": "Legendary",
+      "expiryMs": null
+    },
+    "Cabbage": {
+      "name": "Cabbage Seed",
+      "coinPrice": 30,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "Cacao": {
+      "name": "Cacao Bean",
+      "coinPrice": 10000000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "Cactus": {
+      "name": "Cactus Seed",
+      "coinPrice": 250000,
+      "rarity": "Mythic",
+      "expiryMs": null
+    },
+    "Camellia": {
+      "name": "Camellia Seed",
+      "coinPrice": 55000,
+      "rarity": "Legendary",
+      "expiryMs": null
+    },
+    "Carrot": {
+      "name": "Carrot Seed",
+      "coinPrice": 10,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "Chrysanthemum": {
+      "name": "Chrysanthemum Seed",
+      "coinPrice": 670000,
+      "rarity": "Mythic",
+      "expiryMs": null
+    },
+    "Coconut": {
+      "name": "Coconut Seed",
+      "coinPrice": 10000,
+      "rarity": "Legendary",
+      "expiryMs": null
+    },
+    "Corn": {
+      "name": "Corn Kernel",
+      "coinPrice": 1300,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "Daffodil": {
+      "name": "Daffodil Seed",
+      "coinPrice": 1000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "DawnCelestial": {
+      "name": "Dawnbinder Pod",
+      "coinPrice": 10000000000,
+      "rarity": "Celestial",
+      "expiryMs": null
+    },
+    "DragonFruit": {
+      "name": "Dragon Fruit Seed",
+      "coinPrice": 5000000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "Echeveria": {
+      "name": "Echeveria Cutting",
+      "coinPrice": 4200,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "FavaBean": {
+      "name": "Fava Bean",
+      "coinPrice": 250,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "Gentian": {
+      "name": "Gentian Seed",
+      "coinPrice": 9000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "Grape": {
+      "name": "Grape Seed",
+      "coinPrice": 850000,
+      "rarity": "Mythic",
+      "expiryMs": null
+    },
+    "Lemon": {
+      "name": "Lemon Seed",
+      "coinPrice": 2000000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "Lily": {
+      "name": "Lily Seed",
+      "coinPrice": 20000,
+      "rarity": "Legendary",
+      "expiryMs": null
+    },
+    "Lychee": {
+      "name": "Lychee Pit",
+      "coinPrice": 25000000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "MoonCelestial": {
+      "name": "Moonbinder Pod",
+      "coinPrice": 50000000000,
+      "rarity": "Celestial",
+      "expiryMs": null
+    },
+    "Mushroom": {
+      "name": "Mushroom Spore",
+      "coinPrice": 150000,
+      "rarity": "Mythic",
+      "expiryMs": null
+    },
+    "OrangeTulip": {
+      "name": "Tulip Seed",
+      "coinPrice": 600,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "PassionFruit": {
+      "name": "Passion Fruit Seed",
+      "coinPrice": 2750000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "Pear": {
+      "name": "Pear Seed",
+      "coinPrice": 6000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "Pepper": {
+      "name": "Pepper Seed",
+      "coinPrice": 1000000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "PineTree": {
+      "name": "Pinecone",
+      "coinPrice": 12000,
+      "rarity": "Legendary",
+      "expiryMs": 1768179600000
+    },
+    "Poinsettia": {
+      "name": "Poinsettia Seed",
+      "coinPrice": 500000,
+      "rarity": "Mythic",
+      "expiryMs": 1768179600000
+    },
+    "Pumpkin": {
+      "name": "Pumpkin Seed",
+      "coinPrice": 3000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "Starweaver": {
+      "name": "Starweaver Pod",
+      "coinPrice": 1000000000,
+      "rarity": "Celestial",
+      "expiryMs": null
+    },
+    "Strawberry": {
+      "name": "Strawberry Seed",
+      "coinPrice": 50,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "Sunflower": {
+      "name": "Sunflower Seed",
+      "coinPrice": 100000000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "Tomato": {
+      "name": "Tomato Seed",
+      "coinPrice": 800,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "VioletCort": {
+      "name": "Violet Cort Spore",
+      "coinPrice": 520000,
+      "rarity": "Mythic",
+      "expiryMs": null
+    },
+    "Watermelon": {
+      "name": "Watermelon Seed",
+      "coinPrice": 2500,
+      "rarity": "Rare",
+      "expiryMs": null
+    }
+  },
+  "egg": {
+    "CommonEgg": {
+      "name": "Common Egg",
+      "coinPrice": 100000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "LegendaryEgg": {
+      "name": "Legendary Egg",
+      "coinPrice": 100000000,
+      "rarity": "Legendary",
+      "expiryMs": null
+    },
+    "MythicalEgg": {
+      "name": "Mythical Egg",
+      "coinPrice": 1000000000,
+      "rarity": "Mythic",
+      "expiryMs": null
+    },
+    "RareEgg": {
+      "name": "Rare Egg",
+      "coinPrice": 10000000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "SnowEgg": {
+      "name": "Snow Egg",
+      "coinPrice": 200000000,
+      "rarity": "Legendary",
+      "expiryMs": null
+    },
+    "UncommonEgg": {
+      "name": "Uncommon Egg",
+      "coinPrice": 1000000,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "WinterEgg": {
+      "name": "Winter Egg",
+      "coinPrice": 80000000,
+      "rarity": "Legendary",
+      "expiryMs": 1768179600000
+    }
+  },
+  "decor": {
+    "Cauldron": {
+      "name": "Cauldron",
+      "coinPrice": 666000000,
+      "rarity": "Legendary",
+      "expiryMs": 1762477200000
+    },
+    "ColoredStringLights": {
+      "name": "Colored String Lights",
+      "coinPrice": 8000,
+      "rarity": "Common",
+      "expiryMs": 1768179600000
+    },
+    "DecorShed": {
+      "name": "Decor Shed",
+      "coinPrice": 60000000000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "HayBale": {
+      "name": "Hay Bale",
+      "coinPrice": 6000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "LargeGravestone": {
+      "name": "Large Gravestone",
+      "coinPrice": 50000000,
+      "rarity": "Rare",
+      "expiryMs": 1762477200000
+    },
+    "LargeRock": {
+      "name": "Large Garden Rock",
+      "coinPrice": 5000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "MarbleArch": {
+      "name": "Marble Arch",
+      "coinPrice": 100000000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "MarbleBench": {
+      "name": "Marble Bench",
+      "coinPrice": 75000000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "MarbleBlobling": {
+      "name": "Marble Blobling",
+      "coinPrice": 300000000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "MarbleBridge": {
+      "name": "Marble Bridge",
+      "coinPrice": 150000000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "MarbleCaribou": {
+      "name": "Marble Caribou",
+      "coinPrice": 50000000,
+      "rarity": "Rare",
+      "expiryMs": 1768179600000
+    },
+    "MarbleFountain": {
+      "name": "Marble Fountain",
+      "coinPrice": 450000000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "MarbleLampPost": {
+      "name": "Marble Lamp Post",
+      "coinPrice": 200000000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "MediumGravestone": {
+      "name": "Medium Gravestone",
+      "coinPrice": 500000,
+      "rarity": "Uncommon",
+      "expiryMs": 1762477200000
+    },
+    "MediumRock": {
+      "name": "Medium Garden Rock",
+      "coinPrice": 2500,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "MiniFairyCottage": {
+      "name": "Mini Fairy Cottage",
+      "coinPrice": 500000000,
+      "rarity": "Rare",
+      "expiryMs": null
+    },
+    "MiniFairyForge": {
+      "name": "Mini Fairy Forge",
+      "coinPrice": 5000000000,
+      "rarity": "Legendary",
+      "expiryMs": null
+    },
+    "MiniFairyKeep": {
+      "name": "Mini Fairy Keep",
+      "coinPrice": 25000000000,
+      "rarity": "Mythic",
+      "expiryMs": null
+    },
+    "MiniWizardTower": {
+      "name": "Mini Wizard Tower",
+      "coinPrice": 75000000000,
+      "rarity": "Mythic",
+      "expiryMs": null
+    },
+    "PetHutch": {
+      "name": "Pet Hutch",
+      "coinPrice": 80000000000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "SeedSilo": {
+      "name": "Seed Silo",
+      "coinPrice": 100000000000,
+      "rarity": "Divine",
+      "expiryMs": null
+    },
+    "SmallGravestone": {
+      "name": "Small Gravestone",
+      "coinPrice": 8000,
+      "rarity": "Common",
+      "expiryMs": 1762477200000
+    },
+    "SmallRock": {
+      "name": "Small Garden Rock",
+      "coinPrice": 1000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "StoneArch": {
+      "name": "Stone Arch",
+      "coinPrice": 4000000,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "StoneBench": {
+      "name": "Stone Bench",
+      "coinPrice": 1000000,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "StoneBirdbath": {
+      "name": "Stone Birdbath",
+      "coinPrice": 10000000,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "StoneBridge": {
+      "name": "Stone Bridge",
+      "coinPrice": 5000000,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "StoneCaribou": {
+      "name": "Stone Caribou",
+      "coinPrice": 750000,
+      "rarity": "Uncommon",
+      "expiryMs": 1768179600000
+    },
+    "StoneGnome": {
+      "name": "Stone Gnome",
+      "coinPrice": 9000000,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "StoneLampPost": {
+      "name": "Stone Lamp Post",
+      "coinPrice": 8000000,
+      "rarity": "Uncommon",
+      "expiryMs": null
+    },
+    "StrawScarecrow": {
+      "name": "Straw Scarecrow",
+      "coinPrice": 1000000000,
+      "rarity": "Legendary",
+      "expiryMs": null
+    },
+    "StringLights": {
+      "name": "String Lights",
+      "coinPrice": 7000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "WoodArch": {
+      "name": "Wood Arch",
+      "coinPrice": 20000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "WoodBench": {
+      "name": "Wood Bench",
+      "coinPrice": 10000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "WoodBirdhouse": {
+      "name": "Wood Birdhouse",
+      "coinPrice": 100000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "WoodBridge": {
+      "name": "Wood Bridge",
+      "coinPrice": 40000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "WoodCaribou": {
+      "name": "Wood Caribou",
+      "coinPrice": 9000,
+      "rarity": "Common",
+      "expiryMs": 1768179600000
+    },
+    "WoodLampPost": {
+      "name": "Wood Lamp Post",
+      "coinPrice": 80000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "WoodOwl": {
+      "name": "Wood Owl",
+      "coinPrice": 90000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "WoodPergola": {
+      "name": "Wood Pergola",
+      "coinPrice": 30000,
+      "rarity": "Common",
+      "expiryMs": null
+    },
+    "WoodWindmill": {
+      "name": "Wood Windmill",
+      "coinPrice": 500000,
+      "rarity": "Common",
+      "expiryMs": null
+    }
+  }
+}
