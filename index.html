@@ -652,29 +652,6 @@
       white-space: nowrap;
     }
 
-    .shop-pill {
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .shop-pill.seed {
-      background: #22c55e;
-      color: white;
-    }
-
-    .shop-pill.egg {
-      background: #f59e0b;
-      color: white;
-    }
-
-    .shop-pill.decor {
-      background: #a855f7;
-      color: white;
-    }
 
     /* Empty State */
     .empty-state {
@@ -2368,16 +2345,10 @@
         <table>
           <thead>
             <tr>
-              <th onclick="sortTable('item')" style="width: 50%;">
+              <th onclick="sortTable('item')" style="width: 60%;">
                 Item
                 <span class="sort-indicator ${sortColumn === 'item' ? 'active' : ''}">
                   ${sortColumn === 'item' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
-                </span>
-              </th>
-              <th onclick="sortTable('shop')" style="width: 10%; text-align: center;">
-                Shop
-                <span class="sort-indicator ${sortColumn === 'shop' ? 'active' : ''}">
-                  ${sortColumn === 'shop' ? (sortDirection === 'asc' ? '▲' : '▼') : ''}
                 </span>
               </th>
               <th onclick="sortTable('qty')" style="width: 15%; text-align: center;">
@@ -2426,9 +2397,6 @@
                         </div>
                       </div>
                     </div>
-                  </td>
-                  <td style="text-align: center;">
-                    <span class="shop-pill ${item.shopType}">${item.shopType[0].toUpperCase()}</span>
                   </td>
                   <td style="text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; opacity: 0.9;">
                     ${formatPrice(item.totalQuantity || 0)}
