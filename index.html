@@ -1,7 +1,64 @@
-﻿<!DOCTYPE html> <html lang="en"> <head>   <meta charset="UTF-8">   <meta name="viewport" content="width=device-width, initial-scale=1.0">   <title>Magic Garden Restock Tracker</title>      <link rel="stylesheet" href="./src/css/app.css">
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magic Garden Restock Tracker</title>
+  <link rel="stylesheet" href="./src/css/app.css">
   <link rel="stylesheet" href="./styles.css">
   <link rel="icon" href="./coin.png" type="image/png">
 </head>
-<body>   <div class="header">     <div class="header-title">       <h1>Magic Garden Restock Tracker</h1>     </div>     <div class="header-controls">       <button class="theme-toggle" onclick="toggleTheme()">         <span id="theme-icon">☀️</span> Toggle Theme       </button>     </div>   </div>    <div class="container">     <!-- Status Bar -->     <div class="restock-status-bar">       <div class="restock-status-left">         <div class="status-indicator"></div>         <span id="status-text">Loading...</span>       </div>       <div class="restock-status-right" id="last-updated">         Last updated: -       </div>     </div>      <!-- Active Predictions Card -->     <div class="restock-card">       <div class="card-header" onclick="toggleCard(this)">         <h2>Active Predictions</h2>         <span class="toggle-icon">▼</span>       </div>       <div class="card-content">         <div class="restock-pred-list" id="predictions-list">           <div class="empty-state">             Click an item in the History to show next restock estimation           </div>         </div>       </div>     </div>      <!-- History Card -->     <div class="restock-card">       <div class="card-header" onclick="toggleCard(this)">         <h2>History</h2>         <span class="toggle-icon">▼</span>       </div>       <div class="card-content">         <div class="restock-filter-bar">           <div class="filter-group">             <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>             <button class="filter-btn" data-filter="seed" onclick="setFilter('seed')">Seeds</button>             <button class="filter-btn" data-filter="egg" onclick="setFilter('egg')">Eggs</button>             <button class="filter-btn" data-filter="decor" onclick="setFilter('decor')">Decor</button>           </div>           <div class="search-bar">             <input type="text" class="search-input" placeholder="Search..." oninput="handleSearch(this.value)">           </div>         </div>         <div class="history-table" id="history-table">           <div class="loading">             <div class="loading-spinner"></div>             <span>Loading history...</span>           </div>         </div>       </div>     </div>   </div>      <script type="module" src="./src/js/main.js"></script>
+
+<body>
+  <div class="header">
+    <div class="header-title">
+      <h1>Magic Garden Restock Tracker</h1>
+    </div>
+    <div class="header-controls"> <button class="theme-toggle" onclick="toggleTheme()"> <span id="theme-icon">☀️</span>
+        Toggle Theme </button> </div>
+  </div>
+  <div class="container"> <!-- Status Bar -->
+    <div class="restock-status-bar">
+      <div class="restock-status-left">
+        <div class="status-indicator"></div> <span id="status-text">Loading...</span>
+      </div>
+      <div class="restock-status-right" id="last-updated"> Last updated: - </div>
+    </div> <!-- Active Predictions Card -->
+    <div class="restock-card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <h2>Active Predictions</h2> <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-content">
+        <div class="restock-pred-list" id="predictions-list">
+          <div class="empty-state"> Click an item in the History to show next restock estimation </div>
+        </div>
+      </div>
+    </div> <!-- History Card -->
+    <div class="restock-card">
+      <div class="card-header" onclick="toggleCard(this)">
+        <h2>History</h2> <span class="toggle-icon">▼</span>
+      </div>
+      <div class="card-content">
+        <div class="restock-filter-bar">
+          <div class="filter-group"> <button class="filter-btn active" data-filter="all"
+              onclick="setFilter('all')">All</button> <button class="filter-btn" data-filter="seed"
+              onclick="setFilter('seed')">Seeds</button> <button class="filter-btn" data-filter="egg"
+              onclick="setFilter('egg')">Eggs</button> <button class="filter-btn" data-filter="decor"
+              onclick="setFilter('decor')">Decor</button> <button class="filter-btn" data-filter="weather"
+              onclick="setFilter('weather')">Weather</button> </div>
+          <div class="search-bar"> <input type="text" class="search-input" placeholder="Search..."
+              oninput="handleSearch(this.value)"> </div>
+        </div>
+        <div class="history-table" id="history-table">
+          <div class="loading">
+            <div class="loading-spinner"></div> <span>Loading history...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./src/js/main.js"></script>
 </body>
+
 </html>
