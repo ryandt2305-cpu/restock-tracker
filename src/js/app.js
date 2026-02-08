@@ -316,10 +316,10 @@ async function loadHistoryData(forceRefresh = false) {
         estimatedNextTimestamp: row.estimated_next_timestamp, // The Median-based Estimate
         medianIntervalMs: row.median_interval_ms,
         lastSeen: row.last_seen,
-        // Defaults/Helpers:
-        totalOccurrences: 10, // Dummy to prevent UI errors
-        totalQuantity: 0,
-        averageIntervalMs: row.median_interval_ms, // Map median to average for fallback
+        // Pass-through columns:
+        averageQuantity: row.average_quantity,
+        totalQuantity: row.total_quantity,
+        totalOccurrences: row.total_occurrences,
       }));
     }
 
