@@ -846,16 +846,19 @@ function renderHistory() {
                 item.shopType
               )}</div>
                       <div class="restock-item-sub">
-                        <span class="restock-price-wrap">
-                          <img src="./coin.png" class="restock-coin-icon" alt="Coins">
-                          <span>${formatPrice(getCoinPrice(item.itemId, item.shopType))}</span>
-                        </span>
+                        ${item.shopType === 'weather'
+            ? ''
+            : `<span class="restock-price-wrap">
+                               <img src="./coin.png" class="restock-coin-icon" alt="Coins">
+                               <span>${formatPrice(getCoinPrice(item.itemId, item.shopType))}</span>
+                             </span>`
+          }
                       </div>
                     </div>
                   </div>
                 </td>
                 <td style="text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; opacity: 0.9;">
-                  ${formatPrice(item.totalQuantity || 0)}
+                  ${item.shopType === 'weather' ? (item.totalOccurrences || 0) : formatPrice(item.totalQuantity || 0)}
                 </td>
                 <td>
                   <div class="restock-time-cell" title="${exact.title}">
