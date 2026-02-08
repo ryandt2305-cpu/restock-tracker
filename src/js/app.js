@@ -110,6 +110,7 @@ let retryCount = 0;
 // === Sprites ===
 function getSpriteUrl(itemId, shopType) {
   if (shopType === "seed") {
+    if (itemId === "OrangeTulip") return `https://mg-api.ariedam.fr/assets/sprites/seeds/Tulip.png`; // Fallback to Tulip
     return `https://mg-api.ariedam.fr/assets/sprites/seeds/${itemId}.png`;
   }
   if (shopType === "egg") {
@@ -281,9 +282,18 @@ async function loadHistoryData(forceRefresh = false) {
   lastFetchTime = nowMs();
 
   try {
-    const response = await fetch(CONFIG.API_URL, {
+    // Use the new View for server-side advanced predictions
+    const predictionsUrl = CONFIG.API_URL.replace("/functions/v1/restock-history", "/rest/v1/restock_predictions?select=*");
+
+    // Fallback if replace didn't work (e.g. config changed)
+    const finalUrl = predictionsUrl.includes("restock_predictions")
+      ? predictionsUrl
+      : "https://xjuvryjgrjchbhjixwzh.supabase.co/rest/v1/restock_predictions?select=*";
+
+    const response = await fetch(finalUrl, {
       headers: {
         apikey: CONFIG.API_KEY,
+        "Authorization": `Bearer ${CONFIG.API_KEY}`,
         "Content-Type": "application/json",
       },
       signal: AbortSignal.timeout(10000),
@@ -296,25 +306,26 @@ async function loadHistoryData(forceRefresh = false) {
     const data = await response.json();
 
     historyData = [];
-    if (data.items) {
-      Object.entries(data.items).forEach(([key, itemData]) => {
-        const [shopType, itemId] = key.split(":");
-        historyData.push({
-          itemId,
-          shopType,
-          totalOccurrences: itemData.totalOccurrences || 0,
-          totalQuantity: itemData.totalQuantity || 0,
-          lastSeen: itemData.lastSeen || null,
-          appearanceRate: itemData.appearanceRate || null,
-          estimatedNextTimestamp: itemData.estimatedNextTimestamp || null,
-          averageIntervalMs: itemData.averageIntervalMs || null,
-        });
-      });
+    // The View returns an array, not { items: ... }
+    if (Array.isArray(data)) {
+      historyData = data.map(row => ({
+        itemId: row.item_id,
+        shopType: row.shop_type,
+        // View columns:
+        appearanceRate: row.current_probability, // The Boosted Rate
+        estimatedNextTimestamp: row.estimated_next_timestamp, // The Median-based Estimate
+        medianIntervalMs: row.median_interval_ms,
+        lastSeen: row.last_seen,
+        // Defaults/Helpers:
+        totalOccurrences: 10, // Dummy to prevent UI errors
+        totalQuantity: 0,
+        averageIntervalMs: row.median_interval_ms, // Map median to average for fallback
+      }));
     }
 
     setCachedData(CACHE_KEY, {
       items: historyData,
-      lastUpdated: data.meta?.lastUpdated || nowMs(),
+      lastUpdated: nowMs(), // View doesn't have meta yet
     });
 
     document.getElementById("status-text").textContent = `Tracking ${historyData.length} items`;
@@ -476,35 +487,14 @@ function predictItem(item) {
     };
   }
 
-  const shopInterval = SHOP_CYCLE_INTERVALS[item.shopType];
-  const rate = calculateAppearanceRate(item);
-
-  let expectedIntervalMs = item.averageIntervalMs ?? null;
-  if (expectedIntervalMs === null && rate !== null && rate > 0) {
-    expectedIntervalMs = Math.round(shopInterval / rate);
-  }
-
-  let estimatedNext = item.estimatedNextTimestamp ?? null;
-  if (estimatedNext === null && expectedIntervalMs !== null) {
-    estimatedNext = item.lastSeen + expectedIntervalMs;
-  }
-
-  if (estimatedNext !== null && expectedIntervalMs !== null && expectedIntervalMs > 0) {
-    const now = nowMs();
-    if (estimatedNext < now) {
-      const elapsed = now - item.lastSeen;
-      const cycles = Math.ceil(elapsed / expectedIntervalMs);
-      estimatedNext = item.lastSeen + cycles * expectedIntervalMs;
-    }
-  }
-
-  const avgQty = item.averageQuantity ?? (item.totalQuantity / item.totalOccurrences);
+  // Server-side Logic (Step Boost Model) via View
+  // We trust the DB's values.
 
   return {
     ...item,
-    estimatedNextTimestamp: estimatedNext,
-    appearanceRate: rate,
-    averageQuantity: avgQty,
+    estimatedNextTimestamp: item.estimatedNextTimestamp,
+    appearanceRate: item.appearanceRate,
+    averageQuantity: item.averageQuantity ?? 0,
     isEmpty: false,
   };
 }
