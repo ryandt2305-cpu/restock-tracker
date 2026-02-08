@@ -1,7 +1,7 @@
 ﻿import { CONFIG } from "./config.js";
 import { STATIC_ITEM_DATA } from "./data/static-item-data.js";
 
-const CACHE_KEY = "historyData";
+const CACHE_KEY = "historyData_restock_v2";
 const REFRESH_LOCK_KEY = `${CACHE_KEY}:refresh-lock`;
 const REFRESH_LOCK_TTL_MS = 5 * 60 * 1000;
 const WAIT_FOR_CACHE_UPDATE_MS = 8000;
@@ -406,7 +406,14 @@ function formatRelativeDay(ms) {
 function formatETA(estimatedNext) {
   if (!estimatedNext) return "-";
   const diff = estimatedNext - nowMs();
-  if (diff <= 0) return "now";
+  if (diff <= 0) {
+    // Concise overdue message
+    const ms = Math.abs(diff);
+    const d = Math.floor(ms / 86400000);
+    const h = Math.floor(ms / 3600000);
+    if (d < 1) return `Late ${h}h`;
+    return `Late ${d}d`;
+  }
   const min = Math.ceil(diff / 60000);
   if (min < 60) return `~${min}m`;
   const hr = Math.ceil(min / 60);
