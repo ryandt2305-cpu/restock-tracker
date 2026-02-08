@@ -438,15 +438,31 @@ function getETAColorClass(estimatedNext) {
 
 function ratePercent(rate) {
   if (rate === null) return "-";
+  if (rate >= 1) return "100%";
+  if (rate <= 0) return "0%";
+
   const pct = rate * 100;
-  let maxDecimals;
-  if (pct >= 80) maxDecimals = 0;
-  else if (pct >= 40) maxDecimals = 1;
-  else if (pct >= 10) maxDecimals = 2;
-  else if (pct >= 1) maxDecimals = 3;
-  else maxDecimals = 4;
-  const formatted = pct.toFixed(maxDecimals);
-  return `${parseFloat(formatted)}%`;
+
+  // Logic to prevent rounding to 0% or 100%
+  let formatted;
+  if (pct > 99) {
+    // Force specific precision for high values to avoid rounding up
+    formatted = pct.toString().slice(0, 5); // Simple truncation for now, or use floor
+    if (parseFloat(formatted) >= 100) formatted = "99.99";
+  } else if (pct < 0.01) {
+    formatted = "< 0.01";
+  } else {
+    // Dynamic precision
+    let decimals = 2;
+    if (pct >= 10) decimals = 1;
+    formatted = pct.toFixed(decimals);
+  }
+
+  // Double check manual clamping
+  if (parseFloat(formatted) >= 100) formatted = "99.9";
+  if (parseFloat(formatted) === 0) formatted = "0.01"; // Should be covered by < 0.01 check but safety first
+
+  return `${formatted}%`;
 }
 
 function getRateColorClass(rate) {
@@ -794,7 +810,7 @@ function renderHistory() {
                   </div>
                 </td>
                 <td style="text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; opacity: 0.9;">
-                  ${formatPrice(item.totalOccurrences || 0)}
+                  ${formatPrice(item.totalQuantity || 0)}
                 </td>
                 <td>
                   <div class="restock-time-cell" title="${exact.title}">
