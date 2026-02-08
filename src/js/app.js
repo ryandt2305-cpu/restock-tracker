@@ -1,7 +1,7 @@
 ﻿import { CONFIG } from "./config.js";
 import { STATIC_ITEM_DATA } from "./data/static-item-data.js";
 
-const CACHE_KEY = "historyData_restock_v3";
+const CACHE_KEY = "historyData_restock_v4";
 const REFRESH_LOCK_KEY = `${CACHE_KEY}:refresh-lock`;
 const REFRESH_LOCK_TTL_MS = 5 * 60 * 1000;
 const WAIT_FOR_CACHE_UPDATE_MS = 8000;
