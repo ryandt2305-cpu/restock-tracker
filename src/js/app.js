@@ -116,6 +116,11 @@ function getSpriteUrl(itemId, shopType) {
   if (shopType === "egg") {
     return `https://mg-api.ariedam.fr/assets/sprites/pets/${itemId}.png`;
   }
+  if (shopType === "weather") {
+    // Map Snow -> FrostIcon
+    if (itemId === "Snow") return "./weathericon/FrostIcon.png";
+    return `./weathericon/${itemId}Icon.png`;
+  }
   return null;
 }
 
@@ -284,26 +289,42 @@ async function loadHistoryData(forceRefresh = false) {
   try {
     // Use the new View for server-side advanced predictions
     const predictionsUrl = CONFIG.API_URL.replace("/functions/v1/restock-history", "/rest/v1/restock_predictions?select=*");
+    const weatherUrl = CONFIG.API_URL.replace("/functions/v1/restock-history", "/rest/v1/weather_predictions?select=*");
 
     // Fallback if replace didn't work (e.g. config changed)
     const finalUrl = predictionsUrl.includes("restock_predictions")
       ? predictionsUrl
       : "https://xjuvryjgrjchbhjixwzh.supabase.co/rest/v1/restock_predictions?select=*";
 
-    const response = await fetch(finalUrl, {
-      headers: {
-        apikey: CONFIG.API_KEY,
-        "Authorization": `Bearer ${CONFIG.API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      signal: AbortSignal.timeout(10000),
-    });
+    const finalWeatherUrl = weatherUrl.includes("weather_predictions")
+      ? weatherUrl
+      : "https://xjuvryjgrjchbhjixwzh.supabase.co/rest/v1/weather_predictions?select=*";
+
+    const [response, weatherResponse] = await Promise.all([
+      fetch(finalUrl, {
+        headers: {
+          apikey: CONFIG.API_KEY,
+          "Authorization": `Bearer ${CONFIG.API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        signal: AbortSignal.timeout(10000),
+      }),
+      fetch(finalWeatherUrl, {
+        headers: {
+          apikey: CONFIG.API_KEY,
+          "Authorization": `Bearer ${CONFIG.API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        signal: AbortSignal.timeout(10000),
+      })
+    ]);
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
     const data = await response.json();
+    const weatherData = await weatherResponse.json().catch(() => []);
 
     historyData = [];
     // The View returns an array, not { items: ... }
@@ -322,6 +343,28 @@ async function loadHistoryData(forceRefresh = false) {
         totalOccurrences: row.total_occurrences,
       }));
     }
+
+    // Merge weather
+    if (Array.isArray(weatherData)) {
+      const weatherItems = weatherData.map(row => ({
+        itemId: row.weather_id,
+        shopType: "weather",
+        appearanceRate: row.appearance_rate,
+        estimatedNextTimestamp: row.estimated_next_timestamp,
+        // Use duration from view to determine "Active" state later
+        durationMs: row.duration_ms,
+        lastSeen: row.last_seen,
+        averageQuantity: null,
+        totalQuantity: null,
+        totalOccurrences: row.total_occurrences,
+        // Fallback for "Active Now" check logic in frontend if needed
+        medianIntervalMs: row.average_interval_ms
+      }));
+      historyData = [...historyData, ...weatherItems];
+    }
+
+    // Duplication removed
+
 
     setCachedData(CACHE_KEY, {
       items: historyData,
@@ -622,14 +665,16 @@ function renderPredictions() {
                   <div class="restock-pred-metric-value restock-eta-value ${getETAColorClass(
               pred.estimatedNextTimestamp
             )}">
-                    ${formatETA(pred.estimatedNextTimestamp)}
+                    ${(pred.shopType === 'weather' && pred.lastSeen && (Date.now() - pred.lastSeen < (pred.durationMs || 300000)))
+              ? "Active Now"
+              : formatETA(pred.estimatedNextTimestamp)}
                   </div>
                   <div class="restock-pred-metric-label">next</div>
                 </div>
                 <div class="restock-pred-metric-wrap" data-tooltip="${tooltip}">
                   <div class="restock-pred-metric-value ${getRateColorClass(
-              pred.appearanceRate
-            )}">
+                pred.appearanceRate
+              )}">
                     ${ratePercent(pred.appearanceRate)}
                   </div>
                   <div class="restock-pred-metric-label">rate</div>

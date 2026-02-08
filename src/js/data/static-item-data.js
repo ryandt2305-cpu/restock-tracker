@@ -532,6 +532,42 @@
     "rarity": "common",
     "price": 500000,
     "expiryMs": null
+  },
+  "weather:Sunny": {
+    "name": "Sunny",
+    "rarity": "common",
+    "price": 0,
+    "expiryMs": null
+  },
+  "weather:Rain": {
+    "name": "Rain",
+    "rarity": "uncommon",
+    "price": 0,
+    "expiryMs": null
+  },
+  "weather:Snow": {
+    "name": "Snow",
+    "rarity": "rare",
+    "price": 0,
+    "expiryMs": null
+  },
+  "weather:Thunderstorm": {
+    "name": "Thunderstorm",
+    "rarity": "mythic",
+    "price": 0,
+    "expiryMs": null
+  },
+  "weather:Dawn": {
+    "name": "Dawn",
+    "rarity": "legendary",
+    "price": 0,
+    "expiryMs": null
+  },
+  "weather:AmberMoon": {
+    "name": "Amber Moon",
+    "rarity": "divine",
+    "price": 0,
+    "expiryMs": null
   }
 }
 
