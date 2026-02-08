@@ -27,7 +27,7 @@ function getCachedData(key) {
   if (age > CONFIG.CACHE_DURATION) {
     try {
       localStorage.removeItem(key);
-    } catch {}
+    } catch { }
     return null;
   }
   return rec.data;
@@ -42,7 +42,7 @@ function setCachedData(key, data) {
         timestamp: nowMs(),
       })
     );
-  } catch {}
+  } catch { }
 }
 
 function getCacheAge(key) {
@@ -74,7 +74,7 @@ function tryAcquireRefreshLock() {
 function releaseRefreshLock() {
   try {
     localStorage.removeItem(REFRESH_LOCK_KEY);
-  } catch {}
+  } catch { }
 }
 
 function waitForCacheUpdate() {
@@ -196,7 +196,10 @@ function getItemMeta(itemId, shopType) {
   return STATIC_ITEM_DATA[getItemKey(itemId, shopType)] || null;
 }
 
-function getItemName(itemId, shopType) {\n  const meta = getItemMeta(itemId, shopType);\n  return meta?.name || itemId;\n}
+function getItemName(itemId, shopType) {
+  const meta = getItemMeta(itemId, shopType);
+  return meta?.name || itemId;
+}
 
 function getRarity(itemId, shopType) {
   const meta = getItemMeta(itemId, shopType);
@@ -302,7 +305,7 @@ async function loadHistoryData(forceRefresh = false) {
           totalOccurrences: itemData.totalOccurrences || 0,
           totalQuantity: itemData.totalQuantity || 0,
           lastSeen: itemData.lastSeen || null,
-appearanceRate: itemData.appearanceRate || null,
+          appearanceRate: itemData.appearanceRate || null,
           estimatedNextTimestamp: itemData.estimatedNextTimestamp || null,
           averageIntervalMs: itemData.averageIntervalMs || null,
         });
@@ -564,34 +567,34 @@ function renderPredictions() {
         const tooltip = pred.isEmpty
           ? ""
           : `${formatAvgQty(pred.averageQuantity)}\n${formatFrequency(
-              pred.appearanceRate,
-              pred.shopType
-            )}`;
+            pred.appearanceRate,
+            pred.shopType
+          )}`;
 
         return `
           <div class="restock-pred-row" onclick="toggleTracking('${pred.shopType}', '${pred.itemId}')">
             <div class="restock-pred-left">
               <div class="restock-icon-wrap rarity-${rarity}">
                 ${pred.shopType === "decor"
-                  ? `<img src="${getDecorSpriteUrl(
-                      pred.itemId
-                    )}" loading="lazy" decoding="async" class="restock-item-sprite restock-decor-icon" alt="${getItemName(
-                      pred.itemId,
-                      pred.shopType
-                    )}">`
-                  : spriteUrl
-                    ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(
-                        pred.itemId,
-                        pred.shopType
-                      )}">`
-                    : ""}
+            ? `<img src="${getDecorSpriteUrl(
+              pred.itemId
+            )}" loading="lazy" decoding="async" class="restock-item-sprite restock-decor-icon" alt="${getItemName(
+              pred.itemId,
+              pred.shopType
+            )}">`
+            : spriteUrl
+              ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(
+                pred.itemId,
+                pred.shopType
+              )}">`
+              : ""}
               </div>
               <div class="restock-pred-text">
                 <div class="restock-pred-line1">
                   <span class="restock-item-name restock-text-${rarity}">${getItemName(
-                    pred.itemId,
-                    pred.shopType
-                  )}</span>
+                pred.itemId,
+                pred.shopType
+              )}</span>
                 </div>
                 <div class="restock-pred-line2">
                   ${pred.isEmpty ? "Not enough data" : `Seen ${formatRelative(pred.lastSeen)}`}
@@ -600,20 +603,20 @@ function renderPredictions() {
             </div>
             <div class="restock-pred-metrics">
               ${pred.isEmpty
-                ? '<div class="restock-rate-low">--</div>'
-                : `
+            ? '<div class="restock-rate-low">--</div>'
+            : `
                 <div class="restock-pred-metric-wrap">
                   <div class="restock-pred-metric-value restock-eta-value ${getETAColorClass(
-                    pred.estimatedNextTimestamp
-                  )}">
+              pred.estimatedNextTimestamp
+            )}">
                     ${formatETA(pred.estimatedNextTimestamp)}
                   </div>
                   <div class="restock-pred-metric-label">next</div>
                 </div>
                 <div class="restock-pred-metric-wrap" data-tooltip="${tooltip}">
                   <div class="restock-pred-metric-value ${getRateColorClass(
-                    pred.appearanceRate
-                  )}">
+              pred.appearanceRate
+            )}">
                     ${ratePercent(pred.appearanceRate)}
                   </div>
                   <div class="restock-pred-metric-label">rate</div>
@@ -751,39 +754,39 @@ function renderHistory() {
       </thead>
       <tbody>
         ${filtered
-          .map((item) => {
-            const rarity = getRarity(item.itemId, item.shopType);
-            const spriteUrl = getSpriteUrl(item.itemId, item.shopType);
-            const exact = {
-              primary: formatClock(item.lastSeen),
-              secondary: formatRelativeDay(item.lastSeen),
-              title: item.lastSeen ? new Date(item.lastSeen).toLocaleString() : "-",
-            };
+      .map((item) => {
+        const rarity = getRarity(item.itemId, item.shopType);
+        const spriteUrl = getSpriteUrl(item.itemId, item.shopType);
+        const exact = {
+          primary: formatClock(item.lastSeen),
+          secondary: formatRelativeDay(item.lastSeen),
+          title: item.lastSeen ? new Date(item.lastSeen).toLocaleString() : "-",
+        };
 
-            return `
+        return `
               <tr onclick="toggleTracking('${item.shopType}', '${item.itemId}')">
                 <td>
                   <div class="restock-item-cell">
                     <div class="restock-icon-wrap rarity-${rarity}">
                       ${item.shopType === "decor"
-                        ? `<img src="${getDecorSpriteUrl(
-                            item.itemId
-                          )}" loading="lazy" decoding="async" class="restock-item-sprite restock-decor-icon" alt="${getItemName(
-                            item.itemId,
-                            item.shopType
-                          )}">`
-                        : spriteUrl
-                          ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(
-                              item.itemId,
-                              item.shopType
-                            )}">`
-                          : ""}
+            ? `<img src="${getDecorSpriteUrl(
+              item.itemId
+            )}" loading="lazy" decoding="async" class="restock-item-sprite restock-decor-icon" alt="${getItemName(
+              item.itemId,
+              item.shopType
+            )}">`
+            : spriteUrl
+              ? `<img src="${spriteUrl}" data-fallback-src="${spriteUrl}?v=1" loading="lazy" decoding="async" class="restock-item-sprite" alt="${getItemName(
+                item.itemId,
+                item.shopType
+              )}">`
+              : ""}
                     </div>
                     <div class="restock-item-info">
                       <div class="restock-item-name restock-text-${rarity}">${getItemName(
-                        item.itemId,
-                        item.shopType
-                      )}</div>
+                item.itemId,
+                item.shopType
+              )}</div>
                       <div class="restock-item-sub">
                         <span class="restock-price-wrap">
                           <img src="./coin.png" class="restock-coin-icon" alt="Coins">
@@ -800,14 +803,14 @@ function renderHistory() {
                   <div class="restock-time-cell" title="${exact.title}">
                     <div style="font-weight: 600;">${exact.primary}</div>
                     ${exact.secondary
-                      ? `<div style="opacity: 0.7; font-size: 11px;">${exact.secondary}</div>`
-                      : ""}
+            ? `<div style="opacity: 0.7; font-size: 11px;">${exact.secondary}</div>`
+            : ""}
                   </div>
                 </td>
               </tr>
             `;
-          })
-          .join("")}
+      })
+      .join("")}
       </tbody>
     </table>
   `;
