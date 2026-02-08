@@ -794,7 +794,7 @@ function renderHistory() {
                   </div>
                 </td>
                 <td style="text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; opacity: 0.9;">
-                  ${formatPrice(item.totalQuantity || 0)}
+                  ${formatPrice(item.totalOccurrences || 0)}
                 </td>
                 <td>
                   <div class="restock-time-cell" title="${exact.title}">

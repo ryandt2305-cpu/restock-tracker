@@ -167,6 +167,12 @@
     "price": 600,
     "expiryMs": null
   },
+  "seed:OrangeTulip": {
+    "name": "Orange Tulip Seed",
+    "rarity": "uncommon",
+    "price": 600,
+    "expiryMs": null
+  },
   "seed:PassionFruit": {
     "name": "Passion Fruit Seed",
     "rarity": "divine",
