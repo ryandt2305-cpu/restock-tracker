@@ -518,9 +518,9 @@ function getRateColorClass(rate) {
 
 // === Prediction helpers ===
 const SHOP_CYCLE_INTERVALS = {
-  seed: 6 * 60 * 60 * 1000,
-  egg: 6 * 60 * 60 * 1000,
-  decor: 24 * 60 * 60 * 1000,
+  seed: 5 * 60 * 1000,       // 5 minutes
+  egg: 15 * 60 * 1000,       // 15 minutes
+  decor: 60 * 60 * 1000,     // 60 minutes
 };
 
 function clamp01(v) {
